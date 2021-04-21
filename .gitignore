@@ -3,3 +3,4 @@ supports/data
 namenode/home/*
 namenode/hadoop-data/*
 test
+*checkpoint.ipynb

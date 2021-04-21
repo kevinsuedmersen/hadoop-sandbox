@@ -130,18 +130,18 @@ fi
 # install sqoop
 if [[ $INSTALL_SQOOP == "true" ]]; then
      
-  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.1.1" >> /root/.bashrc
-  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.1.1" >> /root/.bashrc
-  echo "export HADOOP_HDFS_HOME=/opt/hadoop-3.1.1" >> /root/.bashrc
-  echo "export YARN_HOME=/opt/hadoop-3.1.1" >> /root/.bashrc
-  echo "export HADOOP_COMMON_LIB_NATIVE_DIR=/opt/hadoop-3.1.1/lib/native" >> /root/.bashrc
+  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" >> /root/.bashrc
+  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.2.1" >> /root/.bashrc
+  echo "export HADOOP_HDFS_HOME=/opt/hadoop-3.2.1" >> /root/.bashrc
+  echo "export YARN_HOME=/opt/hadoop-3.2.1" >> /root/.bashrc
+  echo "export HADOOP_COMMON_LIB_NATIVE_DIR=/opt/hadoop-3.2.1/lib/native" >> /root/.bashrc
   echo "export SQOOP_HOME=/usr/lib/sqoop" >> /root/.bashrc
 
-  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.1.1" >> /home/$ADMIN_NAME/.bashrc
-  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.1.1" >> /home/$ADMIN_NAME/.bashrc
-  echo "export HADOOP_HDFS_HOME=/opt/hadoop-3.1.1" >> /home/$ADMIN_NAME/.bashrc
-  echo "export YARN_HOME=/opt/hadoop-3.1.1" >> /home/$ADMIN_NAME/.bashrc
-  echo "export HADOOP_COMMON_LIB_NATIVE_DIR=/opt/hadoop-3.1.1/lib/native" >> /home/$ADMIN_NAME/.bashrc
+  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" >> /home/$ADMIN_NAME/.bashrc
+  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.2.1" >> /home/$ADMIN_NAME/.bashrc
+  echo "export HADOOP_HDFS_HOME=/opt/hadoop-3.2.1" >> /home/$ADMIN_NAME/.bashrc
+  echo "export YARN_HOME=/opt/hadoop-3.2.1" >> /home/$ADMIN_NAME/.bashrc
+  echo "export HADOOP_COMMON_LIB_NATIVE_DIR=/opt/hadoop-3.2.1/lib/native" >> /home/$ADMIN_NAME/.bashrc
   echo "export SQOOP_HOME=/usr/lib/sqoop" >> /home/$ADMIN_NAME/.bashrc
 
   cd /tmp
@@ -160,8 +160,8 @@ if [[ $INSTALL_SQOOP == "true" ]]; then
   mv postgresql-42.2.6.jar /usr/lib/sqoop/lib
 
   mv /usr/lib/sqoop/conf/sqoop-env-template.sh /usr/lib/sqoop/conf/sqoop-env.sh
-  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.1.1" >> /usr/lib/sqoop/conf/sqoop-env.sh
-  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.1.1" >> /usr/lib/sqoop/conf/sqoop-env.sh
+  echo "export HADOOP_COMMON_HOME=/opt/hadoop-3.2.1" >> /usr/lib/sqoop/conf/sqoop-env.sh
+  echo "export HADOOP_MAPRED_HOME=/opt/hadoop-3.2.1" >> /usr/lib/sqoop/conf/sqoop-env.sh
 
   rm sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz
   rm mysql-connector-java-8.0.16.tar.gz

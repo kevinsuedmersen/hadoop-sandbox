@@ -3,7 +3,7 @@ version: '3.7'
 services:
   # Hadoop master
   namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
     ports:
       - 9870:9870
@@ -12,7 +12,7 @@ services:
       - ./namenode/home/${ADMIN_NAME:?err}:/home/${ADMIN_NAME:?err}
       - ./namenode/hadoop-data:/hadoop-data
       - ./namenode/entrypoint.sh:/entrypoint.sh
-      - hadoop_namenode:/hadoop/dfs/name
+      - hadoop-namenode:/hadoop/dfs/name
     env_file:
       - ./hadoop.env
       - .env
@@ -20,7 +20,7 @@ services:
       - hadoop
 
   resourcemanager:
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     ports:
       - 8088:8088
@@ -33,10 +33,10 @@ services:
 
   # Hadoop slave 1
   datanode1:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode1
     volumes:
-      - hadoop_datanode_1:/hadoop/dfs/data
+      - hadoop-datanode-1:/hadoop/dfs/data
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
@@ -45,7 +45,7 @@ services:
       - hadoop
 
   nodemanager1:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager1
     volumes:
       - ./nodemanagers/entrypoint.sh:/entrypoint.sh
@@ -59,10 +59,10 @@ services:
 
   # Hadoop slave 2
   datanode2:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode2
     volumes:
-      - hadoop_datanode_2:/hadoop/dfs/data
+      - hadoop-datanode-2:/hadoop/dfs/data
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
@@ -71,7 +71,7 @@ services:
       - hadoop
 
   nodemanager2:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager2
     volumes:
       - ./nodemanagers/entrypoint.sh:/entrypoint.sh
@@ -84,14 +84,14 @@ services:
       - hadoop
 
   historyserver:
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.1.1-java8
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
     container_name: historyserver
     ports:
       - 8188:8188
     environment:
       SERVICE_PRECONDITION: "namenode:9870 datanode1:9864 datanode2:9864 resourcemanager:8088"
     volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
+      - hadoop-historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
     networks:
@@ -114,18 +114,17 @@ services:
       - hadoop
 
   hue-db:
-    # TODO: Rename hue_host to hue-db. Also in hue-overrides.ini and in hue service
-    container_name: hue_host
+    container_name: hue-db
     restart: always
     image: postgres:11.9
     environment:
-      - POSTGRES_USER=hue_user
+      - POSTGRES_USER=user
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=hue_db
+      - POSTGRES_DB=hue
     ports:
       - 5432:5432
     volumes:
-      - hadoop_postgres:/var/lib/postgresql/data
+      - hue-db:/var/lib/postgresql/data
       - ./hue-db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - hadoop
@@ -167,7 +166,7 @@ services:
   
   # Spark
   spark-master:
-    image: bde2020/spark-master:2.3.2-hadoop3.1.1-java8
+    image: bde2020/spark-master:3.1.1-hadoop3.2
     container_name: spark-master
     ports:
       - 8080:8080
@@ -178,7 +177,7 @@ services:
       - hadoop
 
   spark-worker-1:
-    image:  bde2020/spark-worker:2.3.2-hadoop3.1.1-java8
+    image:  bde2020/spark-worker:3.1.1-hadoop3.2
     container_name: spark-worker-1
     depends_on:
       - spark-master
@@ -192,7 +191,7 @@ services:
       - hadoop
   
   spark-worker-2:
-    image:  bde2020/spark-worker:2.3.2-hadoop3.1.1-java8
+    image:  bde2020/spark-worker:3.1.1-hadoop3.2
     container_name: spark-worker-2
     depends_on:
       - spark-master
@@ -205,12 +204,42 @@ services:
     networks: 
       - hadoop
 
+  # Spark notebooks
+  jupyter-spark:
+    # To see all running servers in this container, execute 
+    # `docker exec jupyter-spark jupyter notebook list`
+    container_name: jupyter-spark
+    build:
+      context: jupyter-spark
+      args: 
+        - SPARK_VERSION=3.1.1
+        - HADOOP_VERSION=3.2
+        - SPARK_CHECKSUM=E90B31E58F6D95A42900BA4D288261D71F6C19FA39C1CB71862B792D1B5564941A320227F6AB0E09D946F16B8C1969ED2DEA2A369EC8F9D2D7099189234DE1BE
+        - OPENJDK_VERSION=11
+        # Make sure the python version in the driver (the notebooks) is the same as in spark-master,
+        # spark-worker-1, and spark-worker-2
+        - PYTHON_VERSION=3.7.10
+    ports: 
+      - 8888:8888
+      - 8889:8889
+      - 4040:4040
+      - 4041:4041
+    volumes:
+      - ./jupyter-spark/work:/home/jovyan/work
+    pid: host
+    environment: 
+      - TINI_SUBREAPER=true
+    env_file: 
+      - ./hadoop.env
+    networks:
+      - hadoop
+
 networks:
   hadoop:
 
 volumes:
-  hadoop_namenode:
-  hadoop_datanode_1:
-  hadoop_datanode_2:
-  hadoop_historyserver:
-  hadoop_postgres:
+  hadoop-namenode:
+  hadoop-datanode-1:
+  hadoop-datanode-2:
+  hadoop-historyserver:
+  hue-db:
