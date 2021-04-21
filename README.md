@@ -1,16 +1,16 @@
+# Hadoop Sandbox
+This repos was forked from https://github.com/zar3bski/hadoop-sandbox and the following components were added: 
+- A PostgreSQL database backend for HUE, so that HiveQL queries can be executed
+- A Spark cluster with one master and two worker nodes
+- A Jupyter Notebook server to write code that is executed in the Spark cluster
 
-![image](supports/figures/stack.png)
-
-# prerequisits
-
+# Prerequisits
 you'll need a [docker engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [docker-compose](https://docs.docker.com/compose/)
 
-# Setting
+# Setup
+1. Clone this repo
 
-Clone this repo
-
-add an `.env` file at the root
-
+2. Add an `.env` file at the root that contains the following info:
 ```
 CLUSTER_NAME=the_name_of_your_cluster
 ADMIN_NAME=your_name
@@ -19,52 +19,27 @@ INSTALL_PYTHON=true # whether you want python or not (to run hadoop streaming)
 INSTALL_SQOOP=true
 ```
 
-## Start, Stop and Monitor the stack
-start the stack
-```
-docker-compose up -d --build
-```
-
-stop it
-
-```
-docker-compose down
-```
-
-See logs 
-
-```
-docker-compose logs -t -f
-```
-
-alternatively, you can also create user and import data stored in `supports/data` in HDFS. 
-
-```
-chmod +x setup.sh
-./setup.sh
-``` 
-
-access hdfs through the name node
-```
-sudo docker exec -it namenode bash
-```
+3. Install and start all services with `docker-compose up -d`
 
 # Relevant locations
-
 - hadoop streaming `/opt/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar`
 
 # Web interfaces: 
 - [Yarn ressource manager](http://localhost:8088)
 - [hue](http://localhost:8000)
 - [namenode overview](http://localhost:9870)
+- [Spark master](http://localhost:8080/)
+- [Jupyter Notebook server](http://localhost:8888). To See which token must be entered, execute 
+`docker exec jupyter-spark jupyter notebook list`
 
 # Sources
 Most sources were gathered from [big-data-europe](https://www.big-data-europe.eu/)'s repos
-[main repos](https://hub.docker.com/r/bde2020)
-[base of the docker-compose](https://github.com/big-data-europe/docker-hadoop/blob/master/docker-compose.yml)
+- [main repos](https://hub.docker.com/r/bde2020)
+- [base of the docker-compose](https://github.com/big-data-europe/docker-hadoop/blob/master/docker-compose.yml)
 parts added
-[hue](https://hub.docker.com/r/gethue/hue)
-[hiveserver2](https://hub.docker.com/r/bde2020/hive/)
+- [hue](https://hub.docker.com/r/gethue/hue)
+- [hiveserver2](https://hub.docker.com/r/bde2020/hive/)
+- [zar3bski/hadoop-sandbox](https://github.com/zar3bski/hadoop-sandbox)
 
 # Usefull ressources
 [complete list of HDFS commands](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/FileSystemShell.html)
@@ -104,3 +79,8 @@ and convince yourself that the data is really there!
 To loading some data from HDFS into HIVE, open the [UI of hue](http://localhost:8000/), 
 open up a new HiveQL query console and execute the commands shown in 
 `hue/queries/load_ratings_into_hive.sql` or `hue/queries/load_names_into_hive.sql`
+
+## Simple Pyspark app
+To view a simple app that uses pyspark to connect to our spark cluster, parses some data,
+converts that data into a dataframe and then executes a simple aggregation on it, please
+view the notebook `jupyter-spark/work/tests/movie_dataframe.ipynb`
