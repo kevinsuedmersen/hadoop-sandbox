@@ -5,3 +5,4 @@ namenode/hadoop-data/*
 test
 *checkpoint.ipynb
 *__pycache__
+jupyter-spark/drivers/*

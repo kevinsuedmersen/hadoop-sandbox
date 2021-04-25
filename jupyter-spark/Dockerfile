@@ -12,3 +12,6 @@ RUN conda install -y python=$PYTHON_VERSION
 # Install required pip packages, e.g. pyspark
 COPY requirements.txt /docker_build/requirements.txt
 RUN pip install -r /docker_build/requirements.txt
+
+# Install additional R packages
+RUN conda install -y -c r r-rjdbc

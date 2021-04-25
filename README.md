@@ -1,5 +1,5 @@
 # Hadoop Sandbox
-This repos was forked from https://github.com/zar3bski/hadoop-sandbox and the following components were added: 
+This repos was forked from https://github.com/zar3bski/hadoop-sandbox and the following components were added:
 - A PostgreSQL database backend for HUE, so that HiveQL queries can be executed
 - A Spark cluster with one master and two worker nodes
 - A Jupyter Notebook server to write code that is executed in the Spark cluster
@@ -24,12 +24,12 @@ INSTALL_SQOOP=true
 # Relevant locations
 - hadoop streaming `/opt/hadoop-3.2.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar`
 
-# Web interfaces: 
+# Web interfaces:
 - [Yarn ressource manager](http://localhost:8088)
 - [hue](http://localhost:8000)
 - [namenode overview](http://localhost:9870)
 - [Spark master](http://localhost:8080/)
-- [Jupyter Notebook server](http://localhost:8888). To See which token must be entered, execute 
+- [Jupyter Notebook server](http://localhost:8888). To See which token must be entered, execute
 `docker exec jupyter-spark jupyter notebook list`
 
 # Sources
@@ -72,15 +72,19 @@ hadoop fs -copyFromLocal ml-100k playground/
 hadoop fs -ls playground/ml-100k
 ```
 
-Now, browse the HDFS file system from the [UI of the namenode](http://localhost:9870/explorer.html#/user/root/playground/ml-100k) 
+Now, browse the HDFS file system from the [UI of the namenode](http://localhost:9870/explorer.html#/user/root/playground/ml-100k)
 and convince yourself that the data is really there!
 
 ## Load some data into HIVE
-To loading some data from HDFS into HIVE, open the [UI of hue](http://localhost:8000/), 
-open up a new HiveQL query console and execute the commands shown in 
+To loading some data from HDFS into HIVE, open the [UI of hue](http://localhost:8000/),
+open up a new HiveQL query console and execute the commands shown in
 `hue/queries/load_ratings_into_hive.sql` or `hue/queries/load_names_into_hive.sql`
 
 ## Simple Pyspark app
 To view a simple app that uses pyspark to connect to our spark cluster, parses some data,
 converts that data into a dataframe and then executes a simple aggregation on it, please
 view the notebook `jupyter-spark/work/tests/movie_dataframe.ipynb`
+
+## Simple RSpark app
+First, download the drivers from [here](https://www.progress.com/jdbc/apache-hadoop-hive), unzip all
+files in it and then copy the files into `jupyter-spark/drivers/`.
