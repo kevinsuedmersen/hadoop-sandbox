@@ -86,5 +86,6 @@ converts that data into a dataframe and then executes a simple aggregation on it
 view the notebook `jupyter-spark/work/tests/movie_dataframe.ipynb`
 
 ## Simple RSpark app
-First, download the drivers from [here](https://www.progress.com/jdbc/apache-hadoop-hive), unzip all
-files in it and then copy the files into `jupyter-spark/drivers/`.
+First, download the drivers from [cloudera](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html)
+(yes, cloudera drivers should also work for Apache Hadoop distributions),
+unzip all files in it and then copy the files into `jupyter-spark/drivers/`.

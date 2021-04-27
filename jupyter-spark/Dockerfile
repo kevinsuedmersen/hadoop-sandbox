@@ -15,3 +15,4 @@ RUN pip install -r /docker_build/requirements.txt
 
 # Install additional R packages
 RUN conda install -y -c r r-rjdbc
+RUN conda install -y -c conda-forge r-corrplot
