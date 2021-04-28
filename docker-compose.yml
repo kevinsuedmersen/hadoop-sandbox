@@ -20,6 +20,7 @@ services:
       - hadoop
 
   resourcemanager:
+    restart: always
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     ports:
@@ -155,6 +156,8 @@ services:
   hive-metastore-postgresql:
     container_name: hivedb
     image: bde2020/hive-metastore-postgresql:2.3.0
+    volumes:
+      - hive-metastore:/var/lib/postgresql/data
     networks:
       - hadoop
 
@@ -244,3 +247,4 @@ volumes:
   hadoop-datanode-2:
   hadoop-historyserver:
   hue-db:
+  hive-metastore:
