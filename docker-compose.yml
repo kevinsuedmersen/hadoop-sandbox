@@ -20,6 +20,7 @@ services:
       - hadoop
 
   resourcemanager:
+    restart: always
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     ports:
@@ -155,6 +156,8 @@ services:
   hive-metastore-postgresql:
     container_name: hivedb
     image: bde2020/hive-metastore-postgresql:2.3.0
+    volumes:
+      - hive-metastore:/var/lib/postgresql/data
     networks:
       - hadoop
 
@@ -163,7 +166,7 @@ services:
     image: shawnzhu/prestodb:0.181
     networks:
       - hadoop
-  
+
   # Spark
   spark-master:
     image: bde2020/spark-master:3.1.1-hadoop3.2
@@ -173,7 +176,7 @@ services:
       - 7077:7077
     env_file:
       - ./hadoop.env
-    networks: 
+    networks:
       - hadoop
 
   spark-worker-1:
@@ -187,9 +190,9 @@ services:
       - SPARK_MASTER=spark://spark-master:7077
     env_file:
       - ./hadoop.env
-    networks: 
+    networks:
       - hadoop
-  
+
   spark-worker-2:
     image:  bde2020/spark-worker:3.1.1-hadoop3.2
     container_name: spark-worker-2
@@ -201,17 +204,17 @@ services:
       - SPARK_MASTER=spark://spark-master:7077
     env_file:
       - ./hadoop.env
-    networks: 
+    networks:
       - hadoop
 
   # Spark notebooks
   jupyter-spark:
-    # To see all running servers in this container, execute 
+    # To see all running servers in this container, execute
     # `docker exec jupyter-spark jupyter notebook list`
     container_name: jupyter-spark
     build:
       context: jupyter-spark
-      args: 
+      args:
         - SPARK_VERSION=3.1.1
         - HADOOP_VERSION=3.2
         - SPARK_CHECKSUM=E90B31E58F6D95A42900BA4D288261D71F6C19FA39C1CB71862B792D1B5564941A320227F6AB0E09D946F16B8C1969ED2DEA2A369EC8F9D2D7099189234DE1BE
@@ -219,17 +222,18 @@ services:
         # Make sure the python version in the driver (the notebooks) is the same as in spark-master,
         # spark-worker-1, and spark-worker-2
         - PYTHON_VERSION=3.7.10
-    ports: 
+    ports:
       - 8888:8888
       - 8889:8889
       - 4040:4040
       - 4041:4041
     volumes:
       - ./jupyter-spark/work:/home/jovyan/work
+      - ./jupyter-spark/drivers:/drivers
     pid: host
-    environment: 
+    environment:
       - TINI_SUBREAPER=true
-    env_file: 
+    env_file:
       - ./hadoop.env
     networks:
       - hadoop
@@ -243,3 +247,4 @@ volumes:
   hadoop-datanode-2:
   hadoop-historyserver:
   hue-db:
+  hive-metastore:
