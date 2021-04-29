@@ -197,6 +197,80 @@ SELECT * FROM artikel WHERE artnr IN (SELECT artnr FROM sales)
 
 sieht folgendermaßen aus:
 
-![uebung_2_4](C:\Users\kevin\Google Drive\education\uni\msc_data_science\30100_big_data\hausarbeit\uebung_2_4.png)
+![uebung_24.png](uebung_24.png)
 
 Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismenge in der Datei `output_file_1` zwischengespeichert, und dann werden nur die Artikel aus der Tabelle `artikel` genommen, die in `output_file_1` vorkommen. 
+
+## Übung 2.5
+
+### Laden der Daten in Hive
+
+Zuerst habe ich die Daten der Kaggle Challenge heruntergeladen und in das Volume der Namenode hineinkopiert, sodass es automatisch in das Dateisystem des Namenode Containers durchgeleitet wird. Danach habe ich auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p workspace/eating_and_health` ausgeführt um ein Verzeichnis im HDFS zu erstellen, sodass ich direkt im Anschluss mittels `hadoop fs -copyFromLocal <path_to_local_kaggle_files> workspace/eating_and_health/` die Daten ins HDFS hineinkopieren konnte. 
+
+Danach habe ich über das UI von Hue die Daten vom HDFS in Hive geladen, was in etwa folgendermaßen ausgesehen hat
+
+![uebung_251](uebung_251.PNG)
+
+und im nächsten Schritt so
+
+![uebung_252](uebung_252.PNG)
+
+Danach konnte man auch feststellen, dass die Daten im HDFS nun in das Verzeichnis `/user/hive/warehouse/ehresp_2014/ehresp_2014.csv` *verschoben* wurden, also werden die Daten von nun an von Hive verwaltet. 
+
+### Cloudera Hive Treiber Installation
+
+Wie in der Vorlesung beschrieben, habe ich den aktuellsten Hive JDBC Treiber von der [Cloudera Webseite](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html) herunter geladen und alle sich darin befindenden Ordner extrahiert. Nun müssen diese Treiber Dateien für die Applikation, die auf Hive zugreifen will, zugänglich sein. In meinem Fall ist befindet sich die Applikation auf dem Jupyter Notebook Server, also in dem `jupyter-spark` Container in meinem `docker-compose` Netzwerk. Über ein Volume dieses Containers gelangen die Treiber Dateien dann in das `/drivers` Verzeichnis innerhalb dieses Containers. 
+
+### Hive Zugriff über die Applikation
+
+Im `jupyter-spark` Container habe ich dann ein Jupyter Notebook mit R Kernel erstellt. Mittels
+
+```R
+# List all jar files in /drivers
+cp = list.files(
+    path=c('/drivers/ClouderaHiveJDBC-2.6.2.1002/ClouderaHiveJDBC4-2.6.2.1002'), 
+    pattern='jar', 
+    full.names=T, 
+    recursive=T)
+print(cp)
+```
+
+Werden alle `.jar` (Java Archive) Dateien innerhalb des Hive JDBC Treibers der Version `2.6.2` aufgelistet, was bei mir erstaunlicherweise nur eine einzige Datei gewesen ist, nämlich
+
+```R
+[1] "/drivers/ClouderaHiveJDBC-2.6.2.1002/ClouderaHiveJDBC4-2.6.2.1002/HiveJDBC4.jar"
+```
+
+Danach wird mittels 
+
+```R
+# Connect to Hive
+.jinit()
+drv = JDBC(
+    driverClass="com.cloudera.hive.jdbc4.HS2Driver", 
+    classPath=cp) 
+conn = dbConnect(
+    drv, 
+    "jdbc:hive2://hiveserver:10000/default;AuthMech=3", 
+    "hive", 
+    "hive", 
+    identifier.quote=" ")
+show_databases = dbGetQuery(conn, "show databases")
+print(show_databases)
+
+# Read the data from Hive (make sure to upload ehresp_2014 into Hive first)
+em <- dbGetQuery(conn, "select * from default.ehresp_2014 where euexercise > 0 and erbmi > 0")
+summary(em)
+```
+
+eine Verbindung zu Hive erstellt, wobei man beachten muss, dass der `host` im Connection String `hiveserver`, also der Container Name des Hive Servers ist, was funktioniert, weil der `jupyer-spark` und `hiveserver` Container beide im gleichen `docker-compose` Netzwerk sind. Im Anschluss werden die Daten der Tabelle `ehresp_2014` eingelesen. Hier ist vielleicht erwähnenswert, dass man im Big Data Kontext eigentlich keine ganzen Tabellen in den Hauptspeicher lesen sollte, aber da `ehresp_2014` eine relativ kleine Tabelle ist, macht das hier nicht so viel aus. 
+
+Mittels folgender Befehle werden dann die gewünschten Plots erzeugt
+
+```R
+# Create plots
+corrplot.mixed(corr=cor(em[,3:37]), tl.pos = "lt")
+ggplot(em[], aes(em$erbmi)) + geom_density(color="blue", fill="green", lwd=1.2)
+ggplot(em[], aes(group=em$euexercise, x=em$euexercise, y=em$erbmi, fill=em$euexercise)) + geom_boxplot()
+```
+
