@@ -235,7 +235,7 @@ cp = list.files(
 print(cp)
 ```
 
-Werden alle `.jar` (Java Archive) Dateien innerhalb des Hive JDBC Treibers der Version `2.6.2` aufgelistet, was bei mir erstaunlicherweise nur eine einzige Datei gewesen ist, nämlich
+Werden alle `.jar` (Java Archive) Dateien innerhalb des Hive JDBC Treibers der Version `2.6.2` aufgelistet, was bei mir erstaunlicherweise nur eine einzige Datei gewesen ist, nämlich:
 
 ```R
 [1] "/drivers/ClouderaHiveJDBC-2.6.2.1002/ClouderaHiveJDBC4-2.6.2.1002/HiveJDBC4.jar"
@@ -265,12 +265,11 @@ summary(em)
 
 eine Verbindung zu Hive erstellt, wobei man beachten muss, dass der `host` im Connection String `hiveserver`, also der Container Name des Hive Servers ist, was funktioniert, weil der `jupyer-spark` und `hiveserver` Container beide im gleichen `docker-compose` Netzwerk sind. Im Anschluss werden die Daten der Tabelle `ehresp_2014` eingelesen. Hier ist vielleicht erwähnenswert, dass man im Big Data Kontext eigentlich keine ganzen Tabellen in den Hauptspeicher lesen sollte, aber da `ehresp_2014` eine relativ kleine Tabelle ist, macht das hier nicht so viel aus. 
 
-Mittels folgender Befehle werden dann die gewünschten Plots erzeugt
+Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen aus:
 
-```R
-# Create plots
-corrplot.mixed(corr=cor(em[,3:37]), tl.pos = "lt")
-ggplot(em[], aes(em$erbmi)) + geom_density(color="blue", fill="green", lwd=1.2)
-ggplot(em[], aes(group=em$euexercise, x=em$euexercise, y=em$erbmi, fill=em$euexercise)) + geom_boxplot()
-```
+![uebung_253](uebung_253.PNG)
+
+![uebung_254](uebung_254.PNG)
+
+![uebung_255](uebung_255.PNG)
 

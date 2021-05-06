@@ -1,1 +1,2 @@
-pyspark
+pyspark==3.1.1
+scipy==1.6.3
