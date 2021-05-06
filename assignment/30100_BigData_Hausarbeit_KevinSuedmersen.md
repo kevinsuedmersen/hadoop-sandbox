@@ -280,3 +280,41 @@ Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen 
 ![uebung_254](uebung_254.PNG)
 
 ![uebung_255](uebung_255.PNG)
+
+## Übung 2.6
+
+TODO: Siehe den Code, Erklärungen und Ergebnisse zu Übung 2.6 [in diesem Notebook]()
+
+## Übung 2.7
+
+### Tägliche unit_sales
+
+Wie bereits in anderen Übungen beschrieben habe ich zuerst die Dateien `holiday_events.csv`, `items.csv`, `quito_stores_sample2016_2017.csv` und `transactions.csv` in den `namenode` Container, dann in das HDFS und dann mittels dem Hue UI in Hive geladen. Folgendes HiveQL Statement soll die täglichen `unit_sales` berechnen:
+
+```sql
+select sum(unit_sales) as sum_unit_sales, year(date_quito) as current_year, month(date_quito) as current_month, day(date_quito) as current_day 
+from quito_stores_sample2016_2017 
+where date_format(date_quito ,'u') = 4 
+group by year(date_quito), month(date_quito), day(date_quito)
+order by current_year, current_month, current_day;
+```
+
+Output: 
+
+![uebung_2711](uebung_2711.PNG)
+
+Da mir obiges Statement ein bisschen umständlich vorkam (weil zuerst das Jahr, der Monat und der Tag extrahiert, und danach wieder nach Jahr, Monat und Tag gruppiert werden muss), habe ich im folgenden Statement wieder die Summe der `unit_sales` berechnet, aber dieses mal habe ich nach dem Datum gruppiert. 
+
+```sql
+select sum(unit_sales) as sum_unit_sales, date_quito 
+from quito_stores_sample2016_2017 
+where date_format(date_quito ,'u') = 4 
+group by date_quito;
+```
+
+Output:
+
+![uebung_2712](uebung_2712.PNG)
+
+Der Output scheint mir komplett identisch zu sein. 
+
