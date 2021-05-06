@@ -1,5 +1,9 @@
 # Hausarbeit 30100 Big Data (Kevin Südmersen)
 
+[TOC]
+
+
+
 ## Übung 2.1
 
 Ein Hadoopcluster besteht aus 4 DataNodes mit den Parametern `blocksize` 256 MB und `splitsize` 512 MB. Es soll die Datei `kfz.txt` der Größe 1 TB verteilt werden.
@@ -201,7 +205,11 @@ sieht folgendermaßen aus:
 
 Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismenge in der Datei `output_file_1` zwischengespeichert, und dann werden nur die Artikel aus der Tabelle `artikel` genommen, die in `output_file_1` vorkommen. 
 
-## Übung 2.5
+## Übung 2.5 
+
+Der Code mit Erklärungen befindet sich in [diesem Notebook](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
+
+TODO: Kann ich das alles hierunter löschen? 
 
 ### Laden der Daten in Hive
 
@@ -272,4 +280,3 @@ Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen 
 ![uebung_254](uebung_254.PNG)
 
 ![uebung_255](uebung_255.PNG)
-
