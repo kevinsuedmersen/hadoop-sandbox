@@ -1,8 +1,9 @@
 # Hadoop Sandbox
-This repos was forked from https://github.com/zar3bski/hadoop-sandbox and the following components were added:
+This repo contains an Hadoop docker-compose environment with containers for HDFS, Hue, Spark, Jupyter Notebooks, etc. It was forked from https://github.com/zar3bski/hadoop-sandbox and the following components were added:
 - A PostgreSQL database backend for HUE, so that HiveQL queries can be executed
 - A Spark cluster with one master and two worker nodes
 - A Jupyter Notebook server to write code that is executed in the Spark cluster
+- Example Spark applications that connect to HDFS (see `jupyter-spark/work`)
 
 # Prerequisits
 you'll need a [docker engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [docker-compose](https://docs.docker.com/compose/)
@@ -85,7 +86,6 @@ To view a simple app that uses pyspark to connect to our spark cluster, parses s
 converts that data into a dataframe and then executes a simple aggregation on it, please
 view the notebook `jupyter-spark/work/tests/movie_dataframe.ipynb`
 
-## Simple RSpark app
-First, download the drivers from [cloudera](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html)
-(yes, cloudera drivers should also work for Apache Hadoop distributions),
-unzip all files in it and then copy the files into `jupyter-spark/drivers/`.
+## Simple RSpark app using RJDBC connection to Hive
+To view a simple app that connects to Hive via RJDBC, please view `jupyter-spark/work/assignments/uebuing_25_rjdbc_hive.ipynb`
+
