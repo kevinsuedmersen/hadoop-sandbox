@@ -303,7 +303,7 @@ Output:
 
 ![uebung_2711](uebung_2711.PNG)
 
-Da mir obiges Statement ein bisschen umständlich vorkam (weil zuerst das Jahr, der Monat und der Tag extrahiert, und danach wieder nach Jahr, Monat und Tag gruppiert werden muss), habe ich im folgenden Statement wieder die Summe der `unit_sales` berechnet, aber dieses mal habe ich nach dem Datum gruppiert. 
+In Retroperspektive, kam mir obiges Statement ein bisschen umständlich vor (weil zuerst das Jahr, der Monat und der Tag extrahiert, und danach wieder nach Jahr, Monat und Tag gruppiert werden muss), habe ich im folgenden Statement wieder die Summe der `unit_sales` berechnet, aber dieses mal habe ich nach dem Datum gruppiert. 
 
 ```sql
 select sum(unit_sales) as sum_unit_sales, date_quito 
@@ -317,4 +317,135 @@ Output:
 ![uebung_2712](uebung_2712.PNG)
 
 Der Output scheint mir komplett identisch zu sein. 
+
+### Wöchentliche unit_sales
+
+TODO: Folgendes Statement löschen?
+
+HiveQL Statement:
+
+```sql
+select weekofyear(tr.date_trans) as week, sum(tr.transactions) as weekly_unit_sales 
+from items inner join quito_stores_sample2016_2017 AS quito_store on quito_store.item_nbr_quito = items.item_nbr_item 
+inner join transactions AS tr on tr.store_nbr_trans = quito_store.store_nbr_quito 
+inner join holidays_events on holidays_events.datum_holi = tr.date_trans 
+group by weekofyear(tr.date_trans) 
+order by week;
+```
+
+Ergebnis:
+
+```
+week	weekly_unit_sales	
+1	28567434275	
+2	9830893906	
+6	8730851354	
+7	8149803877	
+8	8729617503	
+9	27677998583	
+10	13910862599	
+12	4080833575	
+13	10579847436	
+14	17302118505	
+15	54653669532	
+16	57646139981	
+17	42643974148	
+18	68828867443	
+19	88542663017	
+20	11272350430	
+21	32300823752	
+24	8108878613	
+25	46405889614	
+26	62945616169	
+27	51432764895	
+28	17027589597	
+29	19450255582	
+30	46223357002	
+31	9531701329	
+32	38449772542	
+33	26209142984	
+34	13882155606	
+35	3979359634	
+39	14157756766	
+40	13135696715	
+41	32857151812	
+44	35150332788	
+45	66891536748	
+46	28736604080	
+47	5014115514	
+48	13026132482	
+49	57633576346	
+50	8591347588	
+51	77485626478	
+52	126260907220	
+53	5832310146	
+```
+
+HiveQL Statement:
+
+```sql
+select weekofyear(date_trans) as week, sum(transactions) as weekly_unit_sales
+from transactions
+group by weekofyear(date_trans)
+order by week;
+```
+
+Ergebnis:
+
+```
+week	weekly_unit_sales	
+1	2904264	
+2	2876856	
+3	2828681	
+4	2787688	
+5	2890639	
+6	2914532	
+7	2944731	
+8	2836890	
+9	2947415	
+10	2967329	
+11	2889503	
+12	2872067	
+13	2893670	
+14	2999954	
+15	2919038	
+16	2997701	
+17	2884039	
+18	3057556	
+19	3031439	
+20	2891410	
+21	2835168	
+22	3013612	
+23	2966299	
+24	2925681	
+25	2861633	
+26	2848133	
+27	2998279	
+28	2852663	
+29	2851306	
+30	2847369	
+31	2986859	
+32	2881863	
+33	2472897	
+34	2272435	
+35	2312863	
+36	2413073	
+37	2282162	
+38	2258478	
+39	2231450	
+40	2364076	
+41	2279355	
+42	2246341	
+43	2205255	
+44	2256071	
+45	2348502	
+46	2265909	
+47	2284200	
+48	2321219	
+49	2479496	
+50	2558796	
+51	3016656	
+52	2885163	
+53	520281	
+```
 
