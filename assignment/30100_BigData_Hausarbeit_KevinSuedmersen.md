@@ -449,3 +449,6 @@ week	weekly_unit_sales
 53	520281	
 ```
 
+## Übung 2.9
+
+TODO: Siehe die Lösungen zu Übung 2.9 in hier: []()
