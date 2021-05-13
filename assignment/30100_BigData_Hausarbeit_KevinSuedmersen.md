@@ -2,27 +2,27 @@
 
 [TOC]
 
+## Hadoop, Hive, Spak
 
-
-## Übung 2.1
+### Übung 2.1
 
 Ein Hadoopcluster besteht aus 4 DataNodes mit den Parametern `blocksize` 256 MB und `splitsize` 512 MB. Es soll die Datei `kfz.txt` der Größe 1 TB verteilt werden.
 
-### (1) Über welches Protokoll werden die Dateiblöcke verteilt?
+#### (1) Über welches Protokoll werden die Dateiblöcke verteilt?
 
 SSH (Secure Shell)
 
-### (2) Wie viele Mapper gibt es auf welchen Nodes?
+#### (2) Wie viele Mapper gibt es auf welchen Nodes?
 
 Ein Mapper bearbeitet einen Split. Ein Split besteht aus 512 / 256 = 2​ Blöcken, also bearbeitet ein Mapper 2 Blöcke
 
 Es gibt 1 TB / 512 MB = 2 Millionen Splits, die auf 4 Nodes verteilt sind, also auf jeder Node gibt es 500.000 Splits und deshalb 500.000 Mapper pro Node. 
 
-### (3) Wie viele Dateiblöcke enthält jeder Node?
+#### (3) Wie viele Dateiblöcke enthält jeder Node?
 
 Es gibt 1 TB / 256 MB = 4 Millionen Blöcke, die auf 4 Nodes verteilt sind, also enthält jeder Node 1 Millionen Blöcke
 
-## Übung 2.2
+### Übung 2.2
 
 Welche Ausgabedaten liefern die Prozesse Map-, Shuffle- und Sort- und Reduce für das SELECT-Statement `SELECT count(identnr), identnr FROM kfz GROUP BY identnr` ?
 
@@ -45,7 +45,7 @@ Reduce Prozess
 - Jeder Reducer berechnet die Summe der Values jeder Gruppe
 - Ausgabe: 1 Datei mit den Spalten `count(identnr)` und `identnr`
 
-## Übung 2.3
+### Übung 2.3
 
 Um die SQL Abfragen dieser Aufgabe ausführen zu können, muss eine Tabelle mit Namen `verkaufteartikel` in Hive existieren. Um die Daten dieser Hive Tabelle in mein lokal installiertes Hadoop Cluster zu transferieren, habe ich im HDFS des Kubernetes Cluster der Hochschule nach einer Datei `verkaufteartikel` mittels `hadoop fs -find / -name "verkaufteartikel*"` gesucht. Danach habe ich die gefundenen Dateien mittels `hadoop fs -copyToLocal <location_of_verkaufteartikel_in_hdfs> <desired_location_on_host>` auf den Host des Hadoop Clusters kopiert, und danach habe ich die dazugehörigen Daten mittels WinSCP auf meinen lokalen Rechner kopiert. 
 
@@ -189,7 +189,7 @@ STAGE PLANS:
 
 
 
-## Übung 2.4
+### Übung 2.4
 
 Hadoop verteilt Dateien und Spark verteilt Programme und SQL Abfragen, insbesondere JOINs. Aus dem Programm wird ein Directed Acyclic Graph (DAG) generiert und es wird versucht diesen DAG zu parallelisieren. Ein DAG ist ein Berechnungsgraph, der ein Anfang und ein Ende hat (also keine Zyklen), der den Programmablauf darstellt und diesen ausführt. 
 
@@ -205,13 +205,13 @@ sieht folgendermaßen aus:
 
 Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismenge in der Datei `output_file_1` zwischengespeichert, und dann werden nur die Artikel aus der Tabelle `artikel` genommen, die in `output_file_1` vorkommen. 
 
-## Übung 2.5 
+### Übung 2.5 
 
 Der Code mit Erklärungen befindet sich in [diesem Notebook](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
 
 TODO: Kann ich das alles hierunter löschen? 
 
-### Laden der Daten in Hive
+#### Laden der Daten in Hive
 
 Zuerst habe ich die Daten der Kaggle Challenge heruntergeladen und in das Volume der Namenode hineinkopiert, sodass es automatisch in das Dateisystem des Namenode Containers durchgeleitet wird. Danach habe ich auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p workspace/eating_and_health` ausgeführt um ein Verzeichnis im HDFS zu erstellen, sodass ich direkt im Anschluss mittels `hadoop fs -copyFromLocal <path_to_local_kaggle_files> workspace/eating_and_health/` die Daten ins HDFS hineinkopieren konnte. 
 
@@ -225,11 +225,11 @@ und im nächsten Schritt so
 
 Danach konnte man auch feststellen, dass die Daten im HDFS nun in das Verzeichnis `/user/hive/warehouse/ehresp_2014/ehresp_2014.csv` *verschoben* wurden, also werden die Daten von nun an von Hive verwaltet. 
 
-### Cloudera Hive Treiber Installation
+#### Cloudera Hive Treiber Installation
 
 Wie in der Vorlesung beschrieben, habe ich den aktuellsten Hive JDBC Treiber von der [Cloudera Webseite](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html) herunter geladen und alle sich darin befindenden Ordner extrahiert. Nun müssen diese Treiber Dateien für die Applikation, die auf Hive zugreifen will, zugänglich sein. In meinem Fall ist befindet sich die Applikation auf dem Jupyter Notebook Server, also in dem `jupyter-spark` Container in meinem `docker-compose` Netzwerk. Über ein Volume dieses Containers gelangen die Treiber Dateien dann in das `/drivers` Verzeichnis innerhalb dieses Containers. 
 
-### Hive Zugriff über die Applikation
+#### Hive Zugriff über die Applikation
 
 Im `jupyter-spark` Container habe ich dann ein Jupyter Notebook mit R Kernel erstellt. Mittels
 
@@ -281,13 +281,13 @@ Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen 
 
 ![uebung_255](uebung_255.PNG)
 
-## Übung 2.6
+### Übung 2.6
 
 TODO: Siehe den Code, Erklärungen und Ergebnisse zu Übung 2.6 [in diesem Notebook]()
 
-## Übung 2.7
+### Übung 2.7
 
-### Tägliche unit_sales
+#### Tägliche unit_sales
 
 Wie bereits in anderen Übungen beschrieben habe ich zuerst die Dateien `holiday_events.csv`, `items.csv`, `quito_stores_sample2016_2017.csv` und `transactions.csv` in den `namenode` Container, dann in das HDFS und dann mittels dem Hue UI in Hive geladen. Folgendes HiveQL Statement soll die täglichen `unit_sales` berechnen:
 
@@ -318,7 +318,7 @@ Output:
 
 Der Output scheint mir komplett identisch zu sein. 
 
-### Wöchentliche unit_sales
+#### Wöchentliche unit_sales
 
 TODO: Folgendes Statement löschen?
 
@@ -449,6 +449,53 @@ week	weekly_unit_sales
 53	520281	
 ```
 
-## Übung 2.9
+### Übung 2.9
 
-TODO: Siehe die Lösungen zu Übung 2.9 in hier: []()
+Siehe die Lösungen zu Übung 2.9 in hier: [github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb)
+
+## Verteilte relationale DBMS
+
+Folgendes SQL Statement wurde in Amazon Redshift ausgeführt:
+
+```sql
+select 
+	referenzdatum,
+    bundesland,
+    landkreis,
+    -- Get the average of the last 7 days in the current bundesland and landkreis
+    (select avg(infiziert) as durchschnitt 
+     from vcoronaerkrankung vc2 
+     where vc2.referenzdatum <= vc1.referenzdatum 
+     and vc2.referenzdatum > (vc1.referenzdatum - 7)
+     and vc2.bundesland = vc1.bundesland 
+     and vc2.landkreis = vc1.landkreis) 
+from vcoronaerkrankung vc1
+```
+
+und liefert folgene Ergebnismenge (insgesammt 22761 Zeilen):
+
+```
+referenzdatum	bundesland				landkreis					durchschnitt
+2021-02-15		Sachsen					LK Bautzen					35
+2021-02-15		Sachsen					LK Mittelsachsen			29
+2021-02-15		Bayern					SK Augsburg					21
+2021-02-15		Mecklenburg-Vorpommern	SK Rostock					7
+2021-02-15		Sachsen					LK Vogtlandkreis			48
+2021-02-15		Thüringen				LK Unstrut-Hainich-Kreis	25
+2021-02-15		Nordrhein-Westfalen		LK Herford					14
+2021-02-15		Hessen					LK Kassel					13
+2021-02-15		Bayern					SK Regensburg				5
+2021-02-15		Bayern					SK Schweinfurt				1
+2021-02-15		Niedersachsen			LK Osnabrück				51
+2021-02-15		Nordrhein-Westfalen		LK Borken					31
+2021-02-15		Nordrhein-Westfalen		SK Mönchengladbach			9
+2021-02-15		Rheinland-Pfalz			LK Bad Kreuznach			11
+2021-02-15		Bremen					SK Bremerhaven				17
+2021-02-15		Baden-Württemberg		LK Rems-Murr-Kreis			24
+2021-02-15		Bayern					LK Dachau					9
+2021-02-15		Bayern					LK Erlangen-Höchstadt		5
+2021-02-15		Thüringen				LK Saale-Orla-Kreis			20
+2021-02-15		Rheinland-Pfalz			SK Trier					5
+```
+
+Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb der letzten 7 Tage (relativ zu einem bestimmtem Referenzdatum) für ein gewissen Landkreis in einem gewissen Bundesland zeigen. 
