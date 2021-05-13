@@ -498,3 +498,4 @@ referenzdatum	bundesland				landkreis					durchschnitt
 2021-02-15		Rheinland-Pfalz			SK Trier					5
 ```
 
+Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb der letzten 7 Tage (relativ zu einem bestimmtem Referenzdatum) für ein gewissen Landkreis in einem gewissen Bundesland zeigen. 
