@@ -499,3 +499,44 @@ referenzdatum	bundesland				landkreis					durchschnitt
 ```
 
 Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb der letzten 7 Tage (relativ zu einem bestimmtem Referenzdatum) für ein gewissen Landkreis in einem gewissen Bundesland zeigen. 
+
+
+
+## MongoDB
+
+Zuerst habe ich versucht die Datei `listingsAndReviews.json` mittels `docker exec mongo mongoimport --username=kevinsuedmersen --password=secret --host=mongo:27017 --db=airbnb --collection=listings_and_reviews --authenticationDatabase=admin --file=/mongo-data/airbnb/listingsAndReviews.json` in eine MongoDB Instanz in meinem lokalen `docker-compose` Netzwerk zu importieren, jedoch kamen dabei verschiedenste Importfehler, die wahrscheinlich damit zu tun hatten, dass manche Felder in `listingsAndReviews.json` Werte wie z.B. `NumberDecimal("1.0")` hatten, also Werte, die nicht durchgehend als Strings formatiert waren, wie es in `json` Datein normalerweise üblich ist. 
+
+Deshalb habe ich mich mit meinem lokal installierten MondoDB Compass auf das MongoDB Cluster der Hochschule verbunden. Dabei musste ich lediglich den Connection String `mongodb+srv://thomas:Morgen0007@cluster1.u6ruv.mongodb.net/test` in Mongo Compass einfügen. Für alle folgenden Aufgaben habe ich als Basis die Daten in `sample_airbnb.listingsAndReviews` verwendet. 
+
+### Teilaufgabe 1
+
+Ermitteln Sie die Adresse mit dem höchsten Preis.
+
+In dem `Aggregations` Tab habe ich folgende Aggregation erzeugt
+
+![mongo_uebung_1](mongo_uebung_1.PNG)
+
+die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen würde:
+
+```python
+[
+    # Select relevant fields
+    {
+        '$project': {
+            'price': 1, 
+            'address': 1
+        }
+    }, 
+    # Sort by price in descending order
+    {
+        '$sort': {
+            'price': -1
+        }
+    }, 
+    # Select the first result, i.e. the document with the highest price
+    {
+        '$limit': 1
+    }
+]
+```
+
