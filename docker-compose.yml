@@ -248,6 +248,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=secret
     volumes:
       - mongo_data:/data/db
+      - ./mongo/mongo-data:/mongo-data
     ports:
       - 27019:27017
     networks:
