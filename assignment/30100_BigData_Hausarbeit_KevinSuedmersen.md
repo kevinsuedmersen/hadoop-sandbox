@@ -540,3 +540,79 @@ die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen w�
 ]
 ```
 
+
+
+### Teilaufgabe 2
+
+Ermitteln Sie pro Adresse die Anzahl an amenities.
+
+#### Lösungsweg 1
+
+Aggregation Pipeline in MongoDB Compass:
+
+![mongo_uebung_21](mongo_uebung_21.PNG)
+
+Pipeline exportiert nach Python Code:
+
+```python
+[
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, 
+    # Calculate the number of amenities per listing, i.e. for each document
+    {
+        '$set': {
+            'n_amenities_per_listing': {
+                '$size': '$amenities'
+            }
+        }
+    }, 
+    # Group by address and calculate the sum of amenities per listing
+    {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities_per_address': {
+                '$sum': '$n_amenities_per_listing'
+            }
+        }
+    }
+]
+```
+
+Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listing, also pro Dokument in der Collection `listingsAndReviews` bestimmt und als zusätzliches Feld `n_amenities_per_listing` hinzugefügt. Danach wird nach `address` gruppiert und `n_amenities_per_listing` aufsummiert. 
+
+#### Lösungsweg 2
+
+![mongo_uebung_22](mongo_uebung_22.PNG)
+
+```python
+[
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, 
+    # Create one document per address and amenity by unrolling the amenities array
+    {
+        '$unwind': {
+            'path': '$amenities'
+        }
+    }, 
+    # Group by address and count how many elements we have in each group
+    {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities': {
+                '$sum': 1
+            }
+        }
+    }
+]
+```
+
+Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Anschließend wird einfach nach `address` gruppiert und die Elemente in jeder Gruppe gezählt. 
+
