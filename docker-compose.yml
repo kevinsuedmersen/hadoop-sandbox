@@ -281,7 +281,9 @@ services:
       # You can, for development purposes, disable authentication by setting
       - NEO4J_AUTH=none
     volumes:
+      # Volume for uploading local files into the DB
       - ./neo4j/neo4j-data:/neo4j-data
+      # Volume managed by neo4j
       - neo4j_data:/data
 
 networks:
