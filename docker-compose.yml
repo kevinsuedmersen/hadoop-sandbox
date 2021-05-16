@@ -238,6 +238,36 @@ services:
     networks:
       - hadoop
 
+  # Mongo
+  mongo:
+    container_name: mongo
+    image: mongo:4.4
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=kevinsuedmersen
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo/mongo-data:/mongo-data
+    ports:
+      - 27019:27017
+    networks:
+      - hadoop
+
+  mongoexpress:
+      container_name: mongoexpress
+      image: mongo-express:0.54
+      restart: always
+      ports:
+        - 8091:8081
+      environment:
+        - ME_CONFIG_MONGODB_ADMINUSERNAME=kevinsuedmersen
+        - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+      networks:
+        - hadoop
+      depends_on:
+        - mongo
+
 networks:
   hadoop:
 
@@ -248,3 +278,4 @@ volumes:
   hadoop-historyserver:
   hue-db:
   hive-metastore:
+  mongo_data:

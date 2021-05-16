@@ -6,3 +6,5 @@ test
 *checkpoint.ipynb
 *__pycache__
 jupyter-spark/drivers/*
+.vscode
+mongo/mongo-data/*

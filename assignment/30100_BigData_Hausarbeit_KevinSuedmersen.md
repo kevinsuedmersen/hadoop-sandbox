@@ -499,3 +499,169 @@ referenzdatum	bundesland				landkreis					durchschnitt
 ```
 
 Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb der letzten 7 Tage (relativ zu einem bestimmtem Referenzdatum) für ein gewissen Landkreis in einem gewissen Bundesland zeigen. 
+
+
+
+## MongoDB
+
+Zuerst habe ich versucht die Datei `listingsAndReviews.json` mittels `docker exec mongo mongoimport --username=kevinsuedmersen --password=secret --host=mongo:27017 --db=airbnb --collection=listings_and_reviews --authenticationDatabase=admin --file=/mongo-data/airbnb/listingsAndReviews.json` in eine MongoDB Instanz in meinem lokalen `docker-compose` Netzwerk zu importieren, jedoch kamen dabei verschiedenste Importfehler, die wahrscheinlich damit zu tun hatten, dass manche Felder in `listingsAndReviews.json` Werte wie z.B. `NumberDecimal("1.0")` hatten, also Werte, die nicht durchgehend als Strings formatiert waren, wie es in `json` Datein normalerweise üblich ist. 
+
+Deshalb habe ich mich mit meinem lokal installierten MondoDB Compass auf das MongoDB Cluster der Hochschule verbunden. Dabei musste ich lediglich den Connection String `mongodb+srv://thomas:Morgen0007@cluster1.u6ruv.mongodb.net/test` in Mongo Compass einfügen. Für alle folgenden Aufgaben habe ich als Basis die Daten in `sample_airbnb.listingsAndReviews` verwendet. 
+
+### Teilaufgabe 1
+
+Ermitteln Sie die Adresse mit dem höchsten Preis.
+
+In dem `Aggregations` Tab habe ich folgende Aggregation erzeugt
+
+![mongo_uebung_1](mongo_uebung_1.PNG)
+
+die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen würde:
+
+```python
+[
+    # Select relevant fields
+    {
+        '$project': {
+            'price': 1, 
+            'address': 1
+        }
+    }, 
+    # Sort by price in descending order
+    {
+        '$sort': {
+            'price': -1
+        }
+    }, 
+    # Select the first result, i.e. the document with the highest price
+    {
+        '$limit': 1
+    }
+]
+```
+
+
+
+### Teilaufgabe 2
+
+Ermitteln Sie pro Adresse die Anzahl an amenities.
+
+#### Lösungsweg 1
+
+Aggregation Pipeline in MongoDB Compass:
+
+![mongo_uebung_21](mongo_uebung_21.PNG)
+
+Pipeline exportiert nach Python Code:
+
+```python
+[
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, 
+    # Calculate the number of amenities per listing, i.e. for each document
+    {
+        '$set': {
+            'n_amenities_per_listing': {
+                '$size': '$amenities'
+            }
+        }
+    }, 
+    # Group by address and calculate the sum of amenities per listing
+    {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities_per_address': {
+                '$sum': '$n_amenities_per_listing'
+            }
+        }
+    }
+]
+```
+
+Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listing, also pro Dokument in der Collection `listingsAndReviews` bestimmt und als zusätzliches Feld `n_amenities_per_listing` hinzugefügt. Danach wird nach `address` gruppiert und `n_amenities_per_listing` aufsummiert. 
+
+#### Lösungsweg 2
+
+MongoDB Compass:
+
+![mongo_uebung_22](mongo_uebung_22.PNG)
+
+Exportierter Python Code:
+
+```python
+[
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, 
+    # Create one document per address and amenity by unrolling the amenities array
+    {
+        '$unwind': {
+            'path': '$amenities'
+        }
+    }, 
+    # Group by address and count how many elements we have in each group
+    {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities': {
+                '$sum': 1
+            }
+        }
+    }
+]
+```
+
+Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Anschließend wird einfach nach `address` gruppiert und die Elemente in jeder Gruppe gezählt. 
+
+### Teilaufgabe 3
+
+Ermitteln Sie die Adresse mit den meisten amenities. 
+
+MondoDB Compass:
+
+![mongo_uebung_3](mongo_uebung_3.PNG)
+
+Exportierter Python Code:
+
+```python
+[
+    # Based on 1. approach from Teilaufgabe 2
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, {
+        '$set': {
+            'n_amenities_per_listing': {
+                '$size': '$amenities'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities_per_address': {
+                '$sum': '$n_amenities_per_listing'
+            }
+        }
+    }, 
+    # Selecting the address with the maximum number of amenities
+    {
+        '$sort': {
+            'n_amenities_per_address': -1
+        }
+    }, {
+        '$limit': 1
+    }
+]
+```
+
+Wenn man erst einmal die Anzahl an amenities pro Adresse berechnet hat (siehe Teilaufgabe 2), dann ist es einfach die Adresse mit den meisten Amenities zu berechnen. Aufbauend auf dem 1. Lösungsweg von Teilaufgabe 2 habe ich eine `sort` und eine `limit` Stage analog zu Teilaufgabe 1 hinzugefügt.
+
