@@ -255,18 +255,34 @@ services:
       - hadoop
 
   mongoexpress:
-      container_name: mongoexpress
-      image: mongo-express:0.54
-      restart: always
-      ports:
-        - 8091:8081
-      environment:
-        - ME_CONFIG_MONGODB_ADMINUSERNAME=kevinsuedmersen
-        - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
-      networks:
-        - hadoop
-      depends_on:
-        - mongo
+    container_name: mongoexpress
+    image: mongo-express:0.54
+    restart: always
+    ports:
+      - 8091:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=kevinsuedmersen
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+    networks:
+      - hadoop
+    depends_on:
+      - mongo
+
+  # neo4j graph database
+  neo4j:
+    container_name: neo4j
+    image: neo4j:4.2
+    restart: always
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      # By default, this requires you to login with neo4j/neo4j and change the password.
+      # You can, for development purposes, disable authentication by setting
+      - NEO4J_AUTH=none
+    volumes:
+      - ./neo4j/neo4j-data:/neo4j-data
+      - neo4j_data:/data
 
 networks:
   hadoop:
@@ -279,3 +295,4 @@ volumes:
   hue-db:
   hive-metastore:
   mongo_data:
+  neo4j_data:
