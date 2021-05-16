@@ -586,7 +586,11 @@ Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listin
 
 #### Lösungsweg 2
 
+MongoDB Compass:
+
 ![mongo_uebung_22](mongo_uebung_22.PNG)
+
+Exportierter Python Code:
 
 ```python
 [
@@ -615,4 +619,49 @@ Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listin
 ```
 
 Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Anschließend wird einfach nach `address` gruppiert und die Elemente in jeder Gruppe gezählt. 
+
+### Teilaufgabe 3
+
+Ermitteln Sie die Adresse mit den meisten amenities. 
+
+MondoDB Compass:
+
+![mongo_uebung_3](mongo_uebung_3.PNG)
+
+Exportierter Python Code:
+
+```python
+[
+    # Based on 1. approach from Teilaufgabe 2
+    {
+        '$project': {
+            'address': 1, 
+            'amenities': 1
+        }
+    }, {
+        '$set': {
+            'n_amenities_per_listing': {
+                '$size': '$amenities'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$address', 
+            'n_amenities_per_address': {
+                '$sum': '$n_amenities_per_listing'
+            }
+        }
+    }, 
+    # Selecting the address with the maximum number of amenities
+    {
+        '$sort': {
+            'n_amenities_per_address': -1
+        }
+    }, {
+        '$limit': 1
+    }
+]
+```
+
+Wenn man erst einmal die Anzahl an amenities pro Adresse berechnet hat (siehe Teilaufgabe 2), dann ist es einfach die Adresse mit den meisten Amenities zu berechnen. Aufbauend auf dem 1. Lösungsweg von Teilaufgabe 2 habe ich eine `sort` und eine `limit` Stage analog zu Teilaufgabe 1 hinzugefügt.
 
