@@ -704,7 +704,7 @@ LOAD CSV FROM 'https://raw.githubusercontent.com/jpatokal/openflights/master/dat
 CREATE (:planes { iata: line[0],icao: line[1]})
 ```
 
-Die kürzeste Verbindung, also die geringste Anzahl von Verbindungen von Node zu Node, zwischen Rio De Janeiro und Berlin wird schließlich folgendermaßen ermittelt:
+Die kürzeste Verbindung zwischen Rio De Janeiro und Berlin wird schließlich folgendermaßen ermittelt:
 
 ```cypher
 MATCH p=shortestPath((airportsource:airports{city: "Berlin"})-[*]->(airportdest:airports {city: "Rio De Janeiro"}))	
