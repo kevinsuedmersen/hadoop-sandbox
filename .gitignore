@@ -8,3 +8,4 @@ test
 jupyter-spark/drivers/*
 .vscode
 mongo/mongo-data/*
+neo4j/neo4j-data/*
