@@ -711,6 +711,8 @@ MATCH p=shortestPath((airportsource:airports{city: "Berlin"})-[*]->(airportdest:
 RETURN  p
 ```
 
+Die `shortestPath` Funktion ermittelt in diesem Fall die kürzeste Anzahl an zu überspringenden Relationships, um von Nodes, deren `city` Property `Berlin` ist, zu Nodes, deren `city` Property `Rio De Janeiro` ist, zu gelangen. Da die Relationships aus der Datei `routes.dat` stammen, die non-Stop Verbindungen von einem Flughafen zu einem anderen Flughafen beinhaltet, zeigt das Ergebnis der `shortestPath` Funktion also wie man seine Reise von Berlin nach Rio De Janeiro planen müsste um möglichst wenig umzusteigen. 
+
 Das Ergebnis dieser Abfrage sieht dann wie folgt aus:
 
 ![neo4j_uebung_2](neo4j_uebung_2.PNG)
