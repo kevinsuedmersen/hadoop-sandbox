@@ -1,10 +1,19 @@
-# Hausarbeit 30100 Big Data (Kevin Südmersen)
+---
+title: Hausarbeit 30100 Big Data
+author: Kevin Südmersen
+subject: Big Data Hausarbeit
+keywords: [Big, Data, Hadoop, Hive, Spark]
+---
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id posuere tortor, blandit hendrerit tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean ut tortor lobortis, euismod nibh nec, pretium massa. Praesent a volutpat enim. Aliquam sem lacus, eleifend imperdiet tellus sed, faucibus lacinia metus. Maecenas id ligula ultricies est bibendum pulvinar eget in lectus. Nunc eu laoreet nulla, sit amet dictum lacus. Cras non metus luctus, cursus libero in, mattis augue. Duis laoreet imperdiet orci, id porta ligula hendrerit a. Nam sapien mi, viverra non aliquam quis, fringilla vitae est. Nulla facilisi. Nam euismod tellus lacus, eget pulvinar tellus suscipit a. Vivamus ornare diam ut risus malesuada aliquam. Nullam vestibulum, arcu ut dictum sollicitudin, nibh risus efficitur dolor, vitae dignissim justo massa sit amet diam. Nunc lacus neque, sollicitudin at felis at, imperdiet feugiat metus.
+
+# Inhaltsangabe
 
 [TOC]
 
-## Hadoop, Hive, Spak
+# Hadoop, Hive, Spark
 
-### Übung 2.1
+## Übung 2.1
 
 Ein Hadoopcluster besteht aus 4 DataNodes mit den Parametern `blocksize` 256 MB und `splitsize` 512 MB. Es soll die Datei `kfz.txt` der Größe 1 TB verteilt werden.
 
@@ -22,7 +31,7 @@ Es gibt 1 TB / 512 MB = 2 Millionen Splits, die auf 4 Nodes verteilt sind, also 
 
 Es gibt 1 TB / 256 MB = 4 Millionen Blöcke, die auf 4 Nodes verteilt sind, also enthält jeder Node 1 Millionen Blöcke
 
-### Übung 2.2
+## Übung 2.2
 
 Welche Ausgabedaten liefern die Prozesse Map-, Shuffle- und Sort- und Reduce für das SELECT-Statement `SELECT count(identnr), identnr FROM kfz GROUP BY identnr` ?
 
@@ -186,8 +195,6 @@ STAGE PLANS:
         - 2020-12-20
 - `Reduce Operator Tree`
     - Hier wird für jede der obigen Gruppen nun die Aggregatsfunktion `count(VALUE._col0)` angewendet
-
-
 
 ### Übung 2.4
 
@@ -716,4 +723,6 @@ Die `shortestPath` Funktion ermittelt in diesem Fall die kürzeste Anzahl an zu 
 Das Ergebnis dieser Abfrage sieht dann wie folgt aus:
 
 ![neo4j_uebung_2](neo4j_uebung_2.PNG)
+
+# Fußnoten
 
