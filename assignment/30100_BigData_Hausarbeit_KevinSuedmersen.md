@@ -213,11 +213,11 @@ Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismeng
 
 ## Übung 2.5 
 
-Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/ca56b97de8262de30c2dabad4c1f51ef0bcd62d1/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
 
 ## Übung 2.6
 
-Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_26_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_26_pyspark.ipynb).
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_26_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/ca56b97de8262de30c2dabad4c1f51ef0bcd62d1/jupyter-spark/work/assignments/uebung_26_pyspark.ipynb).
 
 ## Übung 2.7
 
@@ -414,7 +414,7 @@ Wie man jetzt jedoch sehen kann sind alle Transaktionsvolumina sehr viel kleiner
 
 ## Übung 2.9
 
-Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb).
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/ca56b97de8262de30c2dabad4c1f51ef0bcd62d1/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb).
 
 # Verteilte relationale DBMS
 
@@ -629,7 +629,7 @@ Wenn man erst einmal die Anzahl an `amenities` pro Adresse berechnet hat (siehe 
 
 Man soll Neo4J und die OpenFlight Datenbank installieren und dann die kürzeste Verbindungen zwischen Berlin und Rio de Janeiro ermitteln. 
 
-Die Installation von Neo4J erfolgt auch sehr einfach über Docker, wie man ab Zeile 272 in der [docker-compose](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/docker-compose.yml) Datei sehen kann. Das web-basierte UI von Neo4J ist dann über http://localhost:7474 erreichbar, siehe Screenshot:
+Die Installation von Neo4J erfolgt auch sehr einfach über Docker, wie man ab Zeile 272 in der [docker-compose](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/ca56b97de8262de30c2dabad4c1f51ef0bcd62d1/docker-compose.yml) Datei sehen kann. Das web-basierte UI von Neo4J ist dann über http://localhost:7474 erreichbar, siehe Screenshot:
 
 ![neo4j_uebung_1](neo4j_uebung_1.PNG)
 
@@ -676,6 +676,4 @@ Die `shortestPath` Funktion ermittelt in diesem Fall die kürzeste Anzahl an zu 
 Das Ergebnis dieser Abfrage sieht dann wie folgt aus:
 
 ![neo4j_uebung_2](neo4j_uebung_2.PNG)
-
-# Fußnoten
 
