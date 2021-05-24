@@ -627,13 +627,13 @@ Wenn man erst einmal die Anzahl an `amenities` pro Adresse berechnet hat (siehe 
 
 # Neo4J
 
-Installieren Sie Neo4J und die OpenFlight Datenbank. Ermitteln Sie die kürzesten Verbindungen zwischen Berlin und Rio de Janeiro. 
+Man soll Neo4J und die OpenFlight Datenbank installieren und dann die kürzeste Verbindungen zwischen Berlin und Rio de Janeiro ermitteln. 
 
-Die Installation von Neo4J erfolgt auch sehr einfach über Docker, wie man ab Zeile 272 in der [docker-compose](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/docker-compose.yml) Datei sehen kann. Das web-basierte UI von Neo4J ist dann über http://localhost:7474 ereichbar, siehe Screenshot:
+Die Installation von Neo4J erfolgt auch sehr einfach über Docker, wie man ab Zeile 272 in der [docker-compose](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/docker-compose.yml) Datei sehen kann. Das web-basierte UI von Neo4J ist dann über http://localhost:7474 erreichbar, siehe Screenshot:
 
 ![neo4j_uebung_1](neo4j_uebung_1.PNG)
 
-In rot markiert sieht man die Query Console, in der man Abfragen mit Cyper, der Abfragesprache von Neo4J, eingeben kann. 
+In rot markiert sieht man die Query Konsole, in der man Abfragen mit Cyper, der Abfragesprache von Neo4J, eingeben kann. 
 
 Die Daten der OpenFlight Datenbank können mittels folgender Cypher Abfragen eingelesen werden. Zuerst werden die Daten der `airports.dat` Datei eingelesen mit:
 
@@ -642,14 +642,14 @@ LOAD CSV FROM 'https://raw.githubusercontent.com/jpatokal/openflights/master/dat
 CREATE (:airports { airportid: line[0], name: line[1], city: line[2], country: line[3], iata: line[4], icao: line[5], latitude: line[6], longitude: line[7], altitude: line[8], timezone: line[9], dst: line[10], timezone: line[11], tpe: line[12], source: line[13]})
 ```
 
-`airlines.dat` wird eingelesen mit
+`airlines.dat` wird eingelesen mit:
 
 ```cypher
 LOAD CSV FROM 'https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat' AS line
 CREATE (:airlines { airlineid: line[0], name: line[1], alias: line[2], iata: line[3], icao: line[4], callsign: line[5], country: line[6], active: line[7]})
 ```
 
-`routes.dat` wird eingelesen mit
+`routes.dat` wird eingelesen mit:
 
 ```cypher
 LOAD CSV FROM 'https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat' AS line
@@ -657,7 +657,7 @@ MATCH (airportsource:airports {airportid: line[3]}),(airportdest:airports {airpo
 CREATE (airportsource)-[:R {airlineid:line[1], codeshare: line[6], stops: line[7], equipment: line[8]}]->(airportdest)
 ```
 
-und `planes.dat` wird eingelesen mit
+und `planes.dat` wird eingelesen mit:
 
 ```cypher
 LOAD CSV FROM 'https://raw.githubusercontent.com/jpatokal/openflights/master/data/planes.dat' AS line
