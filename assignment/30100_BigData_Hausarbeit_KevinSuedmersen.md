@@ -213,11 +213,11 @@ Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismeng
 
 ## Übung 2.5 
 
-Der Code mit Erklärungen befindet sich in meinem privaten GitHub Repository unter dieser URL: [github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
 
 ## Übung 2.6
 
-TODO: Siehe den Code, Erklärungen und Ergebnisse zu Übung 2.6 [in diesem Notebook]()
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_26_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_26_pyspark.ipynb)
 
 ## Übung 2.7
 
