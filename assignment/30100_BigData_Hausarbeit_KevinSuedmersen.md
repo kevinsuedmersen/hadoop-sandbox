@@ -1,9 +1,10 @@
----
-title: Hausarbeit 30100 Big Data
-author: Kevin Südmersen
----
+# Hausarbeit 30100 Big Data
 
+<img src="logo.png" alt="logo"  />
 
+**Autor:** Kevin Südmersen
+
+**Datum:** 24.05.2021
 
 # Inhaltsangabe
 
