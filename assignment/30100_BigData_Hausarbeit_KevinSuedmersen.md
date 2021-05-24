@@ -221,9 +221,11 @@ Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](h
 
 ## Übung 2.7
 
+Zu den Dateien von Übung 2.5 und Übung 2.6 sollen einige Auswertungen über Hive erzeugt werden. Da hier keine genauen Vorgaben gegeben sind, werde ich zuerst die täglichen `unit_sales` und danach die wöchentlichen Transaktionsvolumina bestimmen. 
+
 ### Tägliche unit_sales
 
-Wie bereits in anderen Übungen beschrieben habe ich zuerst die Dateien `holiday_events.csv`, `items.csv`, `quito_stores_sample2016_2017.csv` und `transactions.csv` in den `namenode` Container, dann in das HDFS und dann mittels dem Hue UI in Hive geladen. Folgendes HiveQL Statement soll die täglichen `unit_sales` berechnen:
+Wie bereits in anderen Übungen beschrieben habe ich zuerst die Dateien `holiday_events.csv`, `items.csv`, `quito_stores_sample2016_2017.csv` und `transactions.csv` in den `namenode` Container, dann in das HDFS und dann mittels dem Hue UI in Hive hinein geladen. Folgendes HiveQL Statement soll die täglichen `unit_sales` berechnen:
 
 ```sql
 select sum(unit_sales) as sum_unit_sales, year(date_quito) as current_year, month(date_quito) as current_month, day(date_quito) as current_day 
@@ -235,7 +237,20 @@ order by current_year, current_month, current_day;
 
 Output: 
 
-![uebung_2711](uebung_2711.PNG)
+```
+sum_unit_sales		current_year	current_month	current_day	
+138728.35300000012	2016			8				18	
+136600.03799999977	2016			8				25	
+162824.91799999968	2016			9				1	
+151830.44699999987	2016			9				8	
+138104.1880000001	2016			9				15	
+126704.19399999986	2016			9				22	
+130462.76800000001	2016			9				29	
+137414.1			2016			10				6	
+136179.53400000022	2016			10				13	
+150390.17799999972	2016			10				20	
+130887.84000000003	2016			10				27	
+```
 
 In Retroperspektive, kam mir obiges Statement ein bisschen umständlich vor (weil zuerst das Jahr, der Monat und der Tag extrahiert, und danach wieder nach Jahr, Monat und Tag gruppiert werden muss), habe ich im folgenden Statement wieder die Summe der `unit_sales` berechnet, aber dieses mal habe ich nach dem Datum gruppiert. 
 
@@ -243,20 +258,32 @@ In Retroperspektive, kam mir obiges Statement ein bisschen umständlich vor (wei
 select sum(unit_sales) as sum_unit_sales, date_quito 
 from quito_stores_sample2016_2017 
 where date_format(date_quito ,'u') = 4 
-group by date_quito;
+group by date_quito
+order by date_quito;
 ```
 
 Output:
 
-![uebung_2712](uebung_2712.PNG)
+```
+sum_unit_sales		date_quito	
+138728.35300000012	2016-08-18	
+136600.03799999977	2016-08-25	
+162824.91799999968	2016-09-01	
+151830.44699999987	2016-09-08	
+138104.1880000001	2016-09-15	
+126704.19399999986	2016-09-22	
+130462.76800000001	2016-09-29	
+137414.1			2016-10-06	
+136179.53400000022	2016-10-13	
+150390.17799999972	2016-10-20	
+130887.84000000003	2016-10-27	
+```
 
-Der Output scheint mir komplett identisch zu sein. 
+Der Output beider Statements sind identisch. 
 
 ### Wöchentliche unit_sales
 
-TODO: Folgendes Statement löschen?
-
-HiveQL Statement:
+Zuerst habe ich mich von der Vorlesung inspirieren lassen und habe die wöchentlichen Transaktionsvolumina folgendermaßen berechnet: 
 
 ```sql
 select weekofyear(tr.date_trans) as week, sum(tr.transactions) as weekly_unit_sales 
@@ -315,7 +342,7 @@ week	weekly_unit_sales
 53	5832310146	
 ```
 
-HiveQL Statement:
+Nach einiger Überlegung dachte ich mir jedoch, dass man lediglich die Spalten `date_trans` und `transactions` aus der Tabelle `transactions` braucht, um die wöchentlichen Transaktionsvolumina zu berechnen. Deshalb hatte ich die JOINs aus dem obigen Statement herausgenommen und das Statement noch einmal ausgeführt:
 
 ```sql
 select weekofyear(date_trans) as week, sum(transactions) as weekly_unit_sales
@@ -382,6 +409,8 @@ week	weekly_unit_sales
 52	2885163	
 53	520281	
 ```
+
+Wie man jetzt jedoch sehen kann sind alle Transaktionsvolumina sehr viel kleiner. Dies liegt daran, dass durch die vielen JOINs im ersten HiveQL Statement die Transaktionsvolumina künstlich aufgebläht werden, da es scheinbar in den an den JOINs beteiligten Tabellen duplikate JOIN Partner gibt. Z.B. werden die Tabellen `transactions` und `quito_store` folgendermaßen ge-joint:  `inner join transactions AS tr on tr.store_nbr_trans = quito_store.store_nbr_quito`. Wenn es zwischen diesen beiden Tabellen duplikate JOIN Partner gibt, dann muss es für manche `tr.store_nbr_trans` mehr als einen korrespondierenden `quito_store.store_nbr_quito` geben. Aufgrund dieser künstllich aufgeblähten Transaktionsvolumina, würde ich persönlich das zweite HiveQL Statement bevorzugen. 
 
 ## Übung 2.9
 
