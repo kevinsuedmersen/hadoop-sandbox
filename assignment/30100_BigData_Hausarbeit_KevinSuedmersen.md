@@ -466,19 +466,19 @@ Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb d
 
 # MongoDB
 
-Zuerst habe ich versucht die Datei `listingsAndReviews.json` mittels `docker exec mongo mongoimport --username=kevinsuedmersen --password=secret --host=mongo:27017 --db=airbnb --collection=listings_and_reviews --authenticationDatabase=admin --file=/mongo-data/airbnb/listingsAndReviews.json` in eine MongoDB Instanz in meinem lokalen `docker-compose` Netzwerk zu importieren, jedoch kamen dabei verschiedenste Importfehler, die wahrscheinlich damit zu tun hatten, dass manche Felder in `listingsAndReviews.json` Werte wie z.B. `NumberDecimal("1.0")` hatten, also Werte, die nicht durchgehend als Strings formatiert waren, wie es in `json` Datein normalerweise üblich ist. 
+Zuerst habe ich versucht die Datei `listingsAndReviews.json` mittels `docker exec mongo mongoimport --username=kevinsuedmersen --password=secret --host=mongo:27017 --db=airbnb --collection=listings_and_reviews --authenticationDatabase=admin --file=/mongo-data/airbnb/listingsAndReviews.json` in eine MongoDB Instanz in meinem lokalen `docker-compose` Netzwerk zu importieren, jedoch kamen dabei verschiedenste Importfehler, die wahrscheinlich damit zu tun hatten, dass manche Felder in `listingsAndReviews.json` Werte wie z.B. `NumberDecimal("1.0")` hatten, also Werte, die nicht durchgehend als Strings formatiert sind, wie es in `json` Datein normalerweise üblich ist. 
 
-Deshalb habe ich mich mit meinem lokal installierten MondoDB Compass auf das MongoDB Cluster der Hochschule verbunden. Dabei musste ich lediglich den Connection String `mongodb+srv://thomas:Morgen0007@cluster1.u6ruv.mongodb.net/test` in Mongo Compass einfügen. Für alle folgenden Aufgaben habe ich als Basis die Daten in `sample_airbnb.listingsAndReviews` verwendet. 
+Deshalb habe ich mich mit meinem lokal installierten MondoDB Compass auf das MongoDB Cluster der Hochschule verbunden. Dabei musste ich lediglich den Connection String `mongodb+srv://thomas:Morgen0007@cluster1.u6ruv.mongodb.net/test` in Mongo Compass einfügen. Für alle folgenden Aufgaben habe ich als Basis die Daten in `sample_airbnb.listingsAndReviews` (also die Datenbank `sample_airbnb` und die Collection `´listingsAndReviews` verwendet. 
 
 ## Teilaufgabe 1
 
 Ermitteln Sie die Adresse mit dem höchsten Preis.
 
-In dem `Aggregations` Tab habe ich folgende Aggregation erzeugt
+In dem `Aggregations` Tab von MongoDB Compass habe ich folgende Aggregation erzeugt:
 
 ![mongo_uebung_1](mongo_uebung_1.PNG)
 
-die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen würde:
+die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen würde (exklusive der Kommentare):
 
 ```python
 [
@@ -502,11 +502,9 @@ die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen w�
 ]
 ```
 
-
-
 ## Teilaufgabe 2
 
-Ermitteln Sie pro Adresse die Anzahl an amenities.
+Ermitteln Sie pro Adresse die Anzahl an `amenities`.
 
 ### Lösungsweg 1
 
@@ -544,7 +542,7 @@ Pipeline exportiert nach Python Code:
 ]
 ```
 
-Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listing, also pro Dokument in der Collection `listingsAndReviews` bestimmt und als zusätzliches Feld `n_amenities_per_listing` hinzugefügt. Danach wird nach `address` gruppiert und `n_amenities_per_listing` aufsummiert. 
+Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listing, also pro Dokument in der Collection `listingsAndReviews` bestimmt und als zusätzliches Feld `n_amenities_per_listing` hinzugefügt. Danach wird nach `address` gruppiert und `n_amenities_per_listing` aufsummiert, da es ja theoretisch sein könnte, dass manch eine `address` mehr als einmal in `listingsAndReviews` vorkommt.  
 
 ### Lösungsweg 2
 
@@ -562,7 +560,7 @@ Exportierter Python Code:
             'amenities': 1
         }
     }, 
-    # Create one document per address and amenity by unrolling the amenities array
+    # Create one document per address AND amenity by unrolling the amenities array
     {
         '$unwind': {
             'path': '$amenities'
@@ -580,11 +578,11 @@ Exportierter Python Code:
 ]
 ```
 
-Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Anschließend wird einfach nach `address` gruppiert und die Elemente in jeder Gruppe gezählt. 
+Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Wenn man nun anschließend nach `address` gruppiert und die Elemente in jeder Gruppe aufzählt, dann weiß man also wie viele `amenities` zu welcher `address` gehören. 
 
 ## Teilaufgabe 3
 
-Ermitteln Sie die Adresse mit den meisten amenities. 
+Ermitteln Sie die Adresse mit den meisten `amenities`. 
 
 MondoDB Compass:
 
@@ -625,7 +623,7 @@ Exportierter Python Code:
 ]
 ```
 
-Wenn man erst einmal die Anzahl an amenities pro Adresse berechnet hat (siehe Teilaufgabe 2), dann ist es einfach die Adresse mit den meisten Amenities zu berechnen. Aufbauend auf dem 1. Lösungsweg von Teilaufgabe 2 habe ich eine `sort` und eine `limit` Stage analog zu Teilaufgabe 1 hinzugefügt.
+Wenn man erst einmal die Anzahl an `amenities` pro Adresse berechnet hat (siehe Teilaufgabe 2), dann ist es einfach die Adresse mit den meisten `amenities` zu berechnen. Aufbauend auf dem 1. Lösungsweg von Teilaufgabe 2 habe ich eine `sort` und eine `limit` Stage analog zu Teilaufgabe 1 hinzugefügt.
 
 # Neo4J
 
