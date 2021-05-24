@@ -1,11 +1,9 @@
 ---
 title: Hausarbeit 30100 Big Data
 author: Kevin Südmersen
-subject: Big Data Hausarbeit
-keywords: [Big, Data, Hadoop, Hive, Spark]
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id posuere tortor, blandit hendrerit tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean ut tortor lobortis, euismod nibh nec, pretium massa. Praesent a volutpat enim. Aliquam sem lacus, eleifend imperdiet tellus sed, faucibus lacinia metus. Maecenas id ligula ultricies est bibendum pulvinar eget in lectus. Nunc eu laoreet nulla, sit amet dictum lacus. Cras non metus luctus, cursus libero in, mattis augue. Duis laoreet imperdiet orci, id porta ligula hendrerit a. Nam sapien mi, viverra non aliquam quis, fringilla vitae est. Nulla facilisi. Nam euismod tellus lacus, eget pulvinar tellus suscipit a. Vivamus ornare diam ut risus malesuada aliquam. Nullam vestibulum, arcu ut dictum sollicitudin, nibh risus efficitur dolor, vitae dignissim justo massa sit amet diam. Nunc lacus neque, sollicitudin at felis at, imperdiet feugiat metus.
+
 
 # Inhaltsangabe
 
@@ -17,17 +15,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id posuere t
 
 Ein Hadoopcluster besteht aus 4 DataNodes mit den Parametern `blocksize` 256 MB und `splitsize` 512 MB. Es soll die Datei `kfz.txt` der Größe 1 TB verteilt werden.
 
-#### (1) Über welches Protokoll werden die Dateiblöcke verteilt?
+### (1) Über welches Protokoll werden die Dateiblöcke verteilt?
 
 SSH (Secure Shell)
 
-#### (2) Wie viele Mapper gibt es auf welchen Nodes?
+### (2) Wie viele Mapper gibt es auf welchen Nodes?
 
 Ein Mapper bearbeitet einen Split. Ein Split besteht aus 512 / 256 = 2​ Blöcken, also bearbeitet ein Mapper 2 Blöcke
 
 Es gibt 1 TB / 512 MB = 2 Millionen Splits, die auf 4 Nodes verteilt sind, also auf jeder Node gibt es 500.000 Splits und deshalb 500.000 Mapper pro Node. 
 
-#### (3) Wie viele Dateiblöcke enthält jeder Node?
+### (3) Wie viele Dateiblöcke enthält jeder Node?
 
 Es gibt 1 TB / 256 MB = 4 Millionen Blöcke, die auf 4 Nodes verteilt sind, also enthält jeder Node 1 Millionen Blöcke
 
@@ -54,7 +52,7 @@ Reduce Prozess
 - Jeder Reducer berechnet die Summe der Values jeder Gruppe
 - Ausgabe: 1 Datei mit den Spalten `count(identnr)` und `identnr`
 
-### Übung 2.3
+## Übung 2.3
 
 Um die SQL Abfragen dieser Aufgabe ausführen zu können, muss eine Tabelle mit Namen `verkaufteartikel` in Hive existieren. Um die Daten dieser Hive Tabelle in mein lokal installiertes Hadoop Cluster zu transferieren, habe ich im HDFS des Kubernetes Cluster der Hochschule nach einer Datei `verkaufteartikel` mittels `hadoop fs -find / -name "verkaufteartikel*"` gesucht. Danach habe ich die gefundenen Dateien mittels `hadoop fs -copyToLocal <location_of_verkaufteartikel_in_hdfs> <desired_location_on_host>` auf den Host des Hadoop Clusters kopiert, und danach habe ich die dazugehörigen Daten mittels WinSCP auf meinen lokalen Rechner kopiert. 
 
@@ -196,7 +194,7 @@ STAGE PLANS:
 - `Reduce Operator Tree`
     - Hier wird für jede der obigen Gruppen nun die Aggregatsfunktion `count(VALUE._col0)` angewendet
 
-### Übung 2.4
+## Übung 2.4
 
 Hadoop verteilt Dateien und Spark verteilt Programme und SQL Abfragen, insbesondere JOINs. Aus dem Programm wird ein Directed Acyclic Graph (DAG) generiert und es wird versucht diesen DAG zu parallelisieren. Ein DAG ist ein Berechnungsgraph, der ein Anfang und ein Ende hat (also keine Zyklen), der den Programmablauf darstellt und diesen ausführt. 
 
@@ -212,13 +210,13 @@ sieht folgendermaßen aus:
 
 Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismenge in der Datei `output_file_1` zwischengespeichert, und dann werden nur die Artikel aus der Tabelle `artikel` genommen, die in `output_file_1` vorkommen. 
 
-### Übung 2.5 
+## Übung 2.5 
 
 Der Code mit Erklärungen befindet sich in [diesem Notebook](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
 
 TODO: Kann ich das alles hierunter löschen? 
 
-#### Laden der Daten in Hive
+### Laden der Daten in Hive
 
 Zuerst habe ich die Daten der Kaggle Challenge heruntergeladen und in das Volume der Namenode hineinkopiert, sodass es automatisch in das Dateisystem des Namenode Containers durchgeleitet wird. Danach habe ich auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p workspace/eating_and_health` ausgeführt um ein Verzeichnis im HDFS zu erstellen, sodass ich direkt im Anschluss mittels `hadoop fs -copyFromLocal <path_to_local_kaggle_files> workspace/eating_and_health/` die Daten ins HDFS hineinkopieren konnte. 
 
@@ -232,11 +230,11 @@ und im nächsten Schritt so
 
 Danach konnte man auch feststellen, dass die Daten im HDFS nun in das Verzeichnis `/user/hive/warehouse/ehresp_2014/ehresp_2014.csv` *verschoben* wurden, also werden die Daten von nun an von Hive verwaltet. 
 
-#### Cloudera Hive Treiber Installation
+### Cloudera Hive Treiber Installation
 
 Wie in der Vorlesung beschrieben, habe ich den aktuellsten Hive JDBC Treiber von der [Cloudera Webseite](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html) herunter geladen und alle sich darin befindenden Ordner extrahiert. Nun müssen diese Treiber Dateien für die Applikation, die auf Hive zugreifen will, zugänglich sein. In meinem Fall ist befindet sich die Applikation auf dem Jupyter Notebook Server, also in dem `jupyter-spark` Container in meinem `docker-compose` Netzwerk. Über ein Volume dieses Containers gelangen die Treiber Dateien dann in das `/drivers` Verzeichnis innerhalb dieses Containers. 
 
-#### Hive Zugriff über die Applikation
+### Hive Zugriff über die Applikation
 
 Im `jupyter-spark` Container habe ich dann ein Jupyter Notebook mit R Kernel erstellt. Mittels
 
@@ -288,13 +286,13 @@ Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen 
 
 ![uebung_255](uebung_255.PNG)
 
-### Übung 2.6
+## Übung 2.6
 
 TODO: Siehe den Code, Erklärungen und Ergebnisse zu Übung 2.6 [in diesem Notebook]()
 
-### Übung 2.7
+## Übung 2.7
 
-#### Tägliche unit_sales
+### Tägliche unit_sales
 
 Wie bereits in anderen Übungen beschrieben habe ich zuerst die Dateien `holiday_events.csv`, `items.csv`, `quito_stores_sample2016_2017.csv` und `transactions.csv` in den `namenode` Container, dann in das HDFS und dann mittels dem Hue UI in Hive geladen. Folgendes HiveQL Statement soll die täglichen `unit_sales` berechnen:
 
@@ -325,7 +323,7 @@ Output:
 
 Der Output scheint mir komplett identisch zu sein. 
 
-#### Wöchentliche unit_sales
+### Wöchentliche unit_sales
 
 TODO: Folgendes Statement löschen?
 
@@ -456,11 +454,11 @@ week	weekly_unit_sales
 53	520281	
 ```
 
-### Übung 2.9
+## Übung 2.9
 
 Siehe die Lösungen zu Übung 2.9 in hier: [github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb)
 
-## Verteilte relationale DBMS
+# Verteilte relationale DBMS
 
 Folgendes SQL Statement wurde in Amazon Redshift ausgeführt:
 
@@ -509,13 +507,13 @@ Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb d
 
 
 
-## MongoDB
+# MongoDB
 
 Zuerst habe ich versucht die Datei `listingsAndReviews.json` mittels `docker exec mongo mongoimport --username=kevinsuedmersen --password=secret --host=mongo:27017 --db=airbnb --collection=listings_and_reviews --authenticationDatabase=admin --file=/mongo-data/airbnb/listingsAndReviews.json` in eine MongoDB Instanz in meinem lokalen `docker-compose` Netzwerk zu importieren, jedoch kamen dabei verschiedenste Importfehler, die wahrscheinlich damit zu tun hatten, dass manche Felder in `listingsAndReviews.json` Werte wie z.B. `NumberDecimal("1.0")` hatten, also Werte, die nicht durchgehend als Strings formatiert waren, wie es in `json` Datein normalerweise üblich ist. 
 
 Deshalb habe ich mich mit meinem lokal installierten MondoDB Compass auf das MongoDB Cluster der Hochschule verbunden. Dabei musste ich lediglich den Connection String `mongodb+srv://thomas:Morgen0007@cluster1.u6ruv.mongodb.net/test` in Mongo Compass einfügen. Für alle folgenden Aufgaben habe ich als Basis die Daten in `sample_airbnb.listingsAndReviews` verwendet. 
 
-### Teilaufgabe 1
+## Teilaufgabe 1
 
 Ermitteln Sie die Adresse mit dem höchsten Preis.
 
@@ -549,11 +547,11 @@ die, wenn man sie in Python Code exportieren möchte folgendermaßen aussehen w�
 
 
 
-### Teilaufgabe 2
+## Teilaufgabe 2
 
 Ermitteln Sie pro Adresse die Anzahl an amenities.
 
-#### Lösungsweg 1
+### Lösungsweg 1
 
 Aggregation Pipeline in MongoDB Compass:
 
@@ -591,7 +589,7 @@ Pipeline exportiert nach Python Code:
 
 Hier wird in der `$set` Stage zuerst die Länge der `amenities` array pro Listing, also pro Dokument in der Collection `listingsAndReviews` bestimmt und als zusätzliches Feld `n_amenities_per_listing` hinzugefügt. Danach wird nach `address` gruppiert und `n_amenities_per_listing` aufsummiert. 
 
-#### Lösungsweg 2
+### Lösungsweg 2
 
 MongoDB Compass:
 
@@ -627,7 +625,7 @@ Exportierter Python Code:
 
 Hier wird die `amenities` array aufgerollt, d.h. dass als Zwischenergebnis der `unwind` Stage ein Dokument pro Adresse *und* Item in der `amenities` Array zurückkommt (siehe Screenshot). Anschließend wird einfach nach `address` gruppiert und die Elemente in jeder Gruppe gezählt. 
 
-### Teilaufgabe 3
+## Teilaufgabe 3
 
 Ermitteln Sie die Adresse mit den meisten amenities. 
 
@@ -672,7 +670,7 @@ Exportierter Python Code:
 
 Wenn man erst einmal die Anzahl an amenities pro Adresse berechnet hat (siehe Teilaufgabe 2), dann ist es einfach die Adresse mit den meisten Amenities zu berechnen. Aufbauend auf dem 1. Lösungsweg von Teilaufgabe 2 habe ich eine `sort` und eine `limit` Stage analog zu Teilaufgabe 1 hinzugefügt.
 
-## Neo4J
+# Neo4J
 
 Installieren Sie Neo4J und die OpenFlight Datenbank. Ermitteln Sie die kürzesten Verbindungen zwischen Berlin und Rio de Janeiro. 
 
