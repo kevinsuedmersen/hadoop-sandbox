@@ -27,11 +27,11 @@ Es gibt 1 TB / 512 MB = 2 Millionen Splits, die auf 4 Nodes verteilt sind, also 
 
 ### (3) Wie viele Dateiblöcke enthält jeder Node?
 
-Es gibt 1 TB / 256 MB = 4 Millionen Blöcke, die auf 4 Nodes verteilt sind, also enthält jeder Node 1 Millionen Blöcke
+Es gibt 1 TB / 256 MB = 4 Millionen Blöcke, die auf 4 Nodes verteilt sind, also enthält jede Node 1 Millionen Blöcke
 
 ## Übung 2.2
 
-Welche Ausgabedaten liefern die Prozesse Map-, Shuffle- und Sort- und Reduce für das SELECT-Statement `SELECT count(identnr), identnr FROM kfz GROUP BY identnr` ?
+Welche Ausgabedaten liefern die Prozesse Map, Shuffle und Sort & Reduce für das SELECT-Statement `SELECT count(identnr), identnr FROM kfz GROUP BY identnr` ?
 
 Map Prozess
 
@@ -54,7 +54,7 @@ Reduce Prozess
 
 ## Übung 2.3
 
-Um die SQL Abfragen dieser Aufgabe ausführen zu können, muss eine Tabelle mit Namen `verkaufteartikel` in Hive existieren. Um die Daten dieser Hive Tabelle in mein lokal installiertes Hadoop Cluster zu transferieren, habe ich im HDFS des Kubernetes Cluster der Hochschule nach einer Datei `verkaufteartikel` mittels `hadoop fs -find / -name "verkaufteartikel*"` gesucht. Danach habe ich die gefundenen Dateien mittels `hadoop fs -copyToLocal <location_of_verkaufteartikel_in_hdfs> <desired_location_on_host>` auf den Host des Hadoop Clusters kopiert, und danach habe ich die dazugehörigen Daten mittels WinSCP auf meinen lokalen Rechner kopiert. 
+Um die SQL Abfragen dieser Aufgabe ausführen zu können, muss eine Tabelle mit Namen `verkaufteartikel` in Hive existieren. Um die Daten dieser Hive Tabelle in mein lokal installiertes Hadoop Cluster zu transferieren, habe ich im HDFS des Kubernetes Cluster der Hochschule nach einer Datei `verkaufteartikel` mittels `hadoop fs -find / -name "verkaufteartikel*"` gesucht. Danach habe ich die gefundenen Dateipfade mittels `hadoop fs -copyToLocal <location_of_verkaufteartikel_in_hdfs> <desired_location_on_host>` auf den Host des Hadoop Clusters kopiert, und danach habe ich die dazugehörigen Daten mittels WinSCP auf meinen lokalen Rechner kopiert. 
 
 Die Daten in `verkaufteartikel ` sehen folgendermaßen aus:
 
@@ -66,7 +66,7 @@ Die Daten in `verkaufteartikel ` sehen folgendermaßen aus:
 4,2020-12-20,14
 ```
 
-Diese Daten habe ich nun in die Namenode meines lokal installierten Hadoop Clusters kopiert und habe auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p hadoop-data/verkaufteartikel` ausgeführt, um das Verzeichnis `hadoop-data/verkaufteartikel`im HDFS zu erzeugen. Danach habe ich mittels `hadoop fs -copyFromLocal verkaufteartikel.csv hadoop-data/verkaufteartikel/` die Daten in das gerade erzeugte Verzeichnis kopiert. 
+Diese Daten habe ich nun über ein Volume in die Namenode meines lokal installierten Hadoop Clusters kopiert und habe auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p hadoop-data/verkaufteartikel` ausgeführt, um das Verzeichnis `hadoop-data/verkaufteartikel`im HDFS zu erzeugen. Danach habe ich mittels `hadoop fs -copyFromLocal verkaufteartikel.csv hadoop-data/verkaufteartikel` die Daten in das gerade erzeugte Verzeichnis kopiert. 
 
 Danach habe ich einen SQL Query Editor in dem Hue Dienst (Hue ist ein Cluster Management Dienst so ähnlich wie Ambari) geöffnet und mit dem SQL Statement 
 
@@ -75,7 +75,8 @@ Danach habe ich einen SQL Query Editor in dem Hue Dienst (Hue ist ein Cluster Ma
 CREATE EXTERNAL TABLE IF NOT EXISTS verkaufteartikel (
     id INT, 
     date_ DATE, 
-    quantity INT)
+    quantity INT
+)
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n' 
@@ -117,9 +118,9 @@ STAGE PLANS:
               ListSink
 ```
 
-- `TableScan` bedeutet, dass jede Zeile von `verkaufteartikel` einmal in den Hauptspeicher geladen werden musste (**TODO: Fragen ob das stimmt**)
-- Der `Filter Operator` kommt durch die `WHERE` Klausel im SQL Statement zustande und behält nur die Zeilen von `verkaufteartikel`, die die dazugehörige Bedingung erfüllen
-- `predicate (date_ > 2017-01-01)` ist die zu der `WHERE` Klausel gehörende Bedingung
+- `TableScan` bedeutet, dass jede Zeile von `verkaufteartikel` einmal in den Hauptspeicher eingelesen werden musste. Natürlich sollten nicht alle Zeilen auch im Hauptspeicher verbleiben, wenn man mit großen Datenmengen zu tun hat. 
+- Der `Filter Operator` kommt durch die `WHERE` Klausel im SQL Statement zustande und behält nur die Zeilen von `verkaufteartikel`, die die dazugehörige Bedingung erfüllen.
+- `predicate (date_ > 2017-01-01)` ist das zu der `WHERE` Klausel gehörende Prädikat, was immer `true` zurückgibt, wenn die Bedingung erfüllt ist, und `false` ansonsten.
 - `Select Operator` ist eine Projektion auf gewisse Spaltennamen, in unserem Fall wurden mittels `*` alle Spaltennamen selektiert, und deshalb sind in `expressions` alle Spaltennamen aufgeführt. 
 
 Nun zur 2. SQL Abfrage. Das Ergebnis der Abfrage
@@ -196,95 +197,23 @@ STAGE PLANS:
 
 ## Übung 2.4
 
-Hadoop verteilt Dateien und Spark verteilt Programme und SQL Abfragen, insbesondere JOINs. Aus dem Programm wird ein Directed Acyclic Graph (DAG) generiert und es wird versucht diesen DAG zu parallelisieren. Ein DAG ist ein Berechnungsgraph, der ein Anfang und ein Ende hat (also keine Zyklen), der den Programmablauf darstellt und diesen ausführt. 
+Hadoop verteilt Dateien und Spark verteilt Programme, also auch SQL Abfragen, insbesondere JOINs. Aus dem Programm wird ein Directed Acyclic Graph (DAG) generiert und es wird versucht diesen DAG zu parallelisieren. Ein DAG ist ein Berechnungsgraph, der ein Anfang und ein Ende hat (also keine Zyklen), der den Programmablauf darstellt und diesen ausführt. 
 
 Der DAG zu der SQL Abfrage 
 
 ```sql
-SELECT * FROM artikel WHERE artnr IN (SELECT artnr FROM sales)
+SELECT * FROM artikel WHERE artnr IN (SELECT artnr FROM sales);
 ```
 
 sieht folgendermaßen aus:
 
-![uebung_24.png](uebung_24.png)
+![uebung_24](uebung_24.png)
 
 Zuerst wird die Subquery `SELECT artnr FROM sales` ausgeführt, die Ergebnismenge in der Datei `output_file_1` zwischengespeichert, und dann werden nur die Artikel aus der Tabelle `artikel` genommen, die in `output_file_1` vorkommen. 
 
 ## Übung 2.5 
 
-Der Code mit Erklärungen befindet sich in [diesem Notebook](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
-
-TODO: Kann ich das alles hierunter löschen? 
-
-### Laden der Daten in Hive
-
-Zuerst habe ich die Daten der Kaggle Challenge heruntergeladen und in das Volume der Namenode hineinkopiert, sodass es automatisch in das Dateisystem des Namenode Containers durchgeleitet wird. Danach habe ich auf der Kommandozeile der Namenode den Befehl `hadoop fs -mkdir -p workspace/eating_and_health` ausgeführt um ein Verzeichnis im HDFS zu erstellen, sodass ich direkt im Anschluss mittels `hadoop fs -copyFromLocal <path_to_local_kaggle_files> workspace/eating_and_health/` die Daten ins HDFS hineinkopieren konnte. 
-
-Danach habe ich über das UI von Hue die Daten vom HDFS in Hive geladen, was in etwa folgendermaßen ausgesehen hat
-
-![uebung_251](uebung_251.PNG)
-
-und im nächsten Schritt so
-
-![uebung_252](uebung_252.PNG)
-
-Danach konnte man auch feststellen, dass die Daten im HDFS nun in das Verzeichnis `/user/hive/warehouse/ehresp_2014/ehresp_2014.csv` *verschoben* wurden, also werden die Daten von nun an von Hive verwaltet. 
-
-### Cloudera Hive Treiber Installation
-
-Wie in der Vorlesung beschrieben, habe ich den aktuellsten Hive JDBC Treiber von der [Cloudera Webseite](https://www.cloudera.com/downloads/connectors/hive/jdbc/2-6-2.html) herunter geladen und alle sich darin befindenden Ordner extrahiert. Nun müssen diese Treiber Dateien für die Applikation, die auf Hive zugreifen will, zugänglich sein. In meinem Fall ist befindet sich die Applikation auf dem Jupyter Notebook Server, also in dem `jupyter-spark` Container in meinem `docker-compose` Netzwerk. Über ein Volume dieses Containers gelangen die Treiber Dateien dann in das `/drivers` Verzeichnis innerhalb dieses Containers. 
-
-### Hive Zugriff über die Applikation
-
-Im `jupyter-spark` Container habe ich dann ein Jupyter Notebook mit R Kernel erstellt. Mittels
-
-```R
-# List all jar files in /drivers
-cp = list.files(
-    path=c('/drivers/ClouderaHiveJDBC-2.6.2.1002/ClouderaHiveJDBC4-2.6.2.1002'), 
-    pattern='jar', 
-    full.names=T, 
-    recursive=T)
-print(cp)
-```
-
-Werden alle `.jar` (Java Archive) Dateien innerhalb des Hive JDBC Treibers der Version `2.6.2` aufgelistet, was bei mir erstaunlicherweise nur eine einzige Datei gewesen ist, nämlich:
-
-```R
-[1] "/drivers/ClouderaHiveJDBC-2.6.2.1002/ClouderaHiveJDBC4-2.6.2.1002/HiveJDBC4.jar"
-```
-
-Danach wird mittels 
-
-```R
-# Connect to Hive
-.jinit()
-drv = JDBC(
-    driverClass="com.cloudera.hive.jdbc4.HS2Driver", 
-    classPath=cp) 
-conn = dbConnect(
-    drv, 
-    "jdbc:hive2://hiveserver:10000/default;AuthMech=3", 
-    "hive", 
-    "hive", 
-    identifier.quote=" ")
-show_databases = dbGetQuery(conn, "show databases")
-print(show_databases)
-
-# Read the data from Hive (make sure to upload ehresp_2014 into Hive first)
-em <- dbGetQuery(conn, "select * from default.ehresp_2014 where euexercise > 0 and erbmi > 0")
-summary(em)
-```
-
-eine Verbindung zu Hive erstellt, wobei man beachten muss, dass der `host` im Connection String `hiveserver`, also der Container Name des Hive Servers ist, was funktioniert, weil der `jupyer-spark` und `hiveserver` Container beide im gleichen `docker-compose` Netzwerk sind. Im Anschluss werden die Daten der Tabelle `ehresp_2014` eingelesen. Hier ist vielleicht erwähnenswert, dass man im Big Data Kontext eigentlich keine ganzen Tabellen in den Hauptspeicher lesen sollte, aber da `ehresp_2014` eine relativ kleine Tabelle ist, macht das hier nicht so viel aus. 
-
-Die Befehle um die Plots zu erzeugen und deren Ergebnisse sehen folgendermaßen aus:
-
-![uebung_253](uebung_253.PNG)
-
-![uebung_254](uebung_254.PNG)
-
-![uebung_255](uebung_255.PNG)
+Der Code mit Erklärungen befindet sich in meinem privaten GitHub Repository unter dieser URL: [github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_25_rjdbc_hive.ipynb).
 
 ## Übung 2.6
 
