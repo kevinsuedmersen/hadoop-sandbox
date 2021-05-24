@@ -217,7 +217,7 @@ Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](h
 
 ## Übung 2.6
 
-Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_26_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_26_pyspark.ipynb)
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_26_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_26_pyspark.ipynb).
 
 ## Übung 2.7
 
@@ -414,7 +414,7 @@ Wie man jetzt jedoch sehen kann sind alle Transaktionsvolumina sehr viel kleiner
 
 ## Übung 2.9
 
-Siehe die Lösungen zu Übung 2.9 in hier: [github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb)
+Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](https://github.com/kevinsuedmersen/hadoop-sandbox) unter [jupyter-spark/work/assignments/uebung_29_pyspark.ipynb](https://github.com/kevinsuedmersen/hadoop-sandbox/blob/master/jupyter-spark/work/assignments/uebung_29_pyspark.ipynb).
 
 # Verteilte relationale DBMS
 
