@@ -418,24 +418,25 @@ Der Code mit Erklärungen befindet sich in meinem privaten [GitHub Repository](h
 
 # Verteilte relationale DBMS
 
-Folgendes SQL Statement wurde in Amazon Redshift ausgeführt:
+Ein bestimmte SQL Abfrage soll entweder mithilfe von AWS Redshift *oder* MS SQL Server ausgeführt werden. Ich habe mich dazu entschlossen folgendes SQL Statement in Amazon Redshift auszuführen,
 
 ```sql
 select 
 	referenzdatum,
     bundesland,
     landkreis,
-    -- Get the average of the last 7 days in the current bundesland and landkreis
+    -- Get the average of the last 7 days (relative to the current `referenzdatum`) 
+    -- in the current bundesland and landkreis
     (select avg(infiziert) as durchschnitt 
      from vcoronaerkrankung vc2 
      where vc2.referenzdatum <= vc1.referenzdatum 
      and vc2.referenzdatum > (vc1.referenzdatum - 7)
      and vc2.bundesland = vc1.bundesland 
      and vc2.landkreis = vc1.landkreis) 
-from vcoronaerkrankung vc1
+from vcoronaerkrankung vc1;
 ```
 
-und liefert folgene Ergebnismenge (insgesammt 22761 Zeilen):
+welches folgende Ergebnismenge (insgesamt 22761 Zeilen) zurückliefert:
 
 ```
 referenzdatum	bundesland				landkreis					durchschnitt
@@ -462,8 +463,6 @@ referenzdatum	bundesland				landkreis					durchschnitt
 ```
 
 Obige Ergebnismenge soll die durchschnittliche Anzahl an Infektionen innerhalb der letzten 7 Tage (relativ zu einem bestimmtem Referenzdatum) für ein gewissen Landkreis in einem gewissen Bundesland zeigen. 
-
-
 
 # MongoDB
 
