@@ -53,6 +53,8 @@ Go into the `namenode` Container and download some data
 # Go into the namenode container
 docker exec -it namenode bash
 
+# update package list
+apt-get update
 # Install some software utilities
 apt-get install wget unzip
 
